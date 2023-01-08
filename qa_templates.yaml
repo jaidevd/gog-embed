@@ -1,0 +1,63 @@
+binary:
+  - Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
+  - Does the (?P<ylabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
+  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
+  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly less than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
+  - Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
+  - Is the (?P<ylabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
+  - Is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
+  - Is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between any two (?P<plural_xlabel>.*)\s?\?$
+  - Is the sum of the (?P<ylabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
+  - Is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue3>.*) and (?P<xvalue4>.*)\s?\?$
+  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<legendlabel>.*) is greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\s?\?$
+  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition>of|in) (?P<legendlabel1>.*) and (?P<legendlabel2>.*) is greater than the sum of (?P<ylabel2>.*) of (?P<legendlabel3>.*) and (?P<ylabel3>.*) of (?P<legendlabel4>.*)\s?\?$
+  - Is the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
+
+
+retrieval:
+  - Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
+  - What is the (?P<yvalue>.*) (?P<preposition>of|in) (?P<xvalue>.*)\s?\?$
+  - What is the (?P<yvalue>.*) of the ith (?P<legendlabel>.*) in (?P<xvalue>.*)\s?\?$
+  - Does the (?P<ylabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
+  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
+  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly less than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
+
+reasoning:
+  - Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*)\s?\?$
+  - Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*)\s?\?$
+  - In which (?P<xlabel>.*) was the (?P<ylabel>.*) maximum\s?\?$
+  - In which (?P<xlabel>.*) was the (?P<ylabel>.*) minimum\s?\?$
+  - Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
+  - Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
+  - In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) maximum\s?\?$
+  - In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) minimum\s?\?$
+  - What is the sum of (?P<title>.*)\s?\?$
+  - What is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*)\s?\?$
+  - What is the average (?P<ylabel>.*) per (?P<singular_xlabel>.*)\s?\?$
+  - What is the median (?P<ylabel>.*)\s?\?$
+  - What is the total (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in the graph\s?\?$
+  - What is the difference between the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) and that in (?P<xvalue2>.*)\s?\?$
+  - What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue2>.*)\s?\?$
+  - What is the average (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) per (?P<singular_xlabel>.*)\s?\?$
+  - In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\s?\?$
+  - In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) and (?P<ylabel2>.*)\s?\?$
+  - What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue>.*)\s?\?$
+  - In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
+  - Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
+  - What is the ratio of the (?P<ylabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\s?\?$
+  - Is the (?P<ylabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
+  - In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
+  - What is the ratio of the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\s?\?$
+  - Is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
+  - Is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between any two (?P<plural_xlabel>.*)\s?\?$
+  - What is the difference between the highest and the second highest (?P<ylabel>.*)\s?\?$
+  - Is the sum of the (?P<ylabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
+  - What is the difference between the highest and the lowest (?P<ylabel>.*)\s?\?$
+  - In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) greater than the average (?P<ylabel2>.*) taken over all (?P<plural_xlabel2>.*)\s?\?$
+  - Is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue3>.*) and (?P<xvalue4>.*)\s?\?$
+  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<legendlabel>.*) is greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\s?\?$
+  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition>of|in) (?P<legendlabel1>.*) and (?P<legendlabel2>.*) is greater than the sum of (?P<ylabel2>.*) of (?P<legendlabel3>.*) and (?P<ylabel3>.*) of (?P<legendlabel4>.*)\s?\?$
+  - In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) greater than the average (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) taken over all (?P<plural_xlabel2>.*)\s?\?$
+  - What is the difference between the highest and the lowest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
+  - What is the difference between the highest and the second highest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
+  - Is the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
