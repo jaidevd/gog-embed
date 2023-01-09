@@ -94,22 +94,7 @@
 - id: 18
   regex: "What is the ratio of the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\\s?\\?$"
   template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}"
-  caption_templates:
-    - "The ratio of the {{ metric }} in {{ xvalue1 }} to that in {{ xvalue2 }} is {{ answer }}."
-    - "{% if answer > 1 %}
-       The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by a factor of {{ answer }}.
-       {% elif answer == 1 %}
-       The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.
-       {% else %}
-       The {{ metric }} in {{ xvalue1 }} is less than that in {{ xvalue2 }} by a factor of {{ answer }}.
-       {% end %}"
-    - "{% if answer > 1 %}
-       The {{ metric }} in {{ xvalue1 }} is {{ answer }} times greater than that in {{ xvalue2 }}.
-       {% elif answer == 1 %}
-       The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.
-       {% else %}
-       The {{ metric }} in {{ xvalue2 }} is {{ 1 / answer }} times greater than that in {{ xvalue1 }}.
-       {% end %}"
+  caption_templates: captions.randomize_18
   type: "retrieval"
 - id: 19
   regex: "In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
@@ -204,42 +189,7 @@
 - id: 37
   regex: "What is the difference between the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) and that in (?P<xvalue2>.*)\\s?\\?$"
   template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}"
-  caption_templates:
-    - "{% if answer == 0 %}
-      There is no difference between the {{ metric }} in {{ xvalue1 }} and that in {{ xvalue2 }}.
-      {% else if answer > 0 %}
-      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
-      {% else %}
-      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
-      {% end %}"
-    - "{% if answer == 0 %}
-      There is no difference between the {{ metric }} in {{ xvalue2 }} and that in {{ xvalue1 }}.
-      {% else if answer > 0 %}
-      The {{ metric }} in {{ xvalue2 }} is less than that in {{ xvalue1 }} by {{ answer }}.
-      {% else %}
-      The {{ metric }} in {{ xvalue1 }} is less than that in {{ xvalue2 }} by {{ -1 * answer }}.
-      {% end %}"
-    - "{% if answer == 0 %}
-      The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.
-      {% else if answer > 0 %}
-      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
-      {% else %}
-      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
-      {% end %}"
-    - "{% if answer == 0 %}
-      The {{ metric }} in {{ xvalue2 }} is equal to that in {{ xvalue1 }}.
-      {% else if answer > 0 %}
-      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
-      {% else %}
-      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
-      {% end %}"
-    - "{% if answer == 0 %}
-      The {{ metric }} in {{ xvalue1 }} is the same as that in {{ xvalue2 }}.
-      {% else if answer > 0 %}
-      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
-      {% else %}
-      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
-      {% end %}"
+  caption_templates: captions.randomize_37
   type: "retrieval"
 - id: 38
   regex: "What is the ratio of the (?P<ylabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\\s?\\?$"
@@ -250,13 +200,7 @@
   regex: "What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue2>.*)\\s?\\?$"
   template_header: "{% set X = f'{ylabel1} {preposition1} {legendlabel1} in {xvalue1}' %}
                     {% set Y = f'{ylabel2} {preposition2} {legendlabel2} in {xvalue2}' %}"
-  caption_templates:
-    - "The difference between the {{ X }} and the {{ Y }} is {{ answer }}."
-    - "The {{ X }} and the {{ Y }} differ by {{ answer }}."
-    - "The difference between the {{ Y }} and the {{ X }} is {{ answer }}."
-    - "The {{ Y }} and the {{ X }} differ by {{ answer }}."
-    - "{{ answer }} is the difference between the {{ X }} and the {{ Y }}."
-    - "{{ answer }} is the difference between the {{ Y }} and the {{ X }}."
+  caption_templates: captions.randomize_39
   type: "retrieval"
 - id: 40
   regex: "Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
