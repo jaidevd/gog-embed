@@ -1,63 +1,285 @@
-binary:
-  - Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
-  - Does the (?P<ylabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
-  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
-  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly less than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
-  - Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
-  - Is the (?P<ylabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
-  - Is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
-  - Is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between any two (?P<plural_xlabel>.*)\s?\?$
-  - Is the sum of the (?P<ylabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
-  - Is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue3>.*) and (?P<xvalue4>.*)\s?\?$
-  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<legendlabel>.*) is greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\s?\?$
-  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition>of|in) (?P<legendlabel1>.*) and (?P<legendlabel2>.*) is greater than the sum of (?P<ylabel2>.*) of (?P<legendlabel3>.*) and (?P<ylabel3>.*) of (?P<legendlabel4>.*)\s?\?$
-  - Is the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
-
-
-retrieval:
-  - Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
-  - What is the (?P<yvalue>.*) (?P<preposition>of|in) (?P<xvalue>.*)\s?\?$
-  - What is the (?P<yvalue>.*) of the ith (?P<legendlabel>.*) in (?P<xvalue>.*)\s?\?$
-  - Does the (?P<ylabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\s?\?$
-  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
-  - Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly less than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\s?\?$
-
-reasoning:
-  - Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*)\s?\?$
-  - Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*)\s?\?$
-  - In which (?P<xlabel>.*) was the (?P<ylabel>.*) maximum\s?\?$
-  - In which (?P<xlabel>.*) was the (?P<ylabel>.*) minimum\s?\?$
-  - Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
-  - Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
-  - In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) maximum\s?\?$
-  - In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) minimum\s?\?$
-  - What is the sum of (?P<title>.*)\s?\?$
-  - What is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*)\s?\?$
-  - What is the average (?P<ylabel>.*) per (?P<singular_xlabel>.*)\s?\?$
-  - What is the median (?P<ylabel>.*)\s?\?$
-  - What is the total (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in the graph\s?\?$
-  - What is the difference between the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) and that in (?P<xvalue2>.*)\s?\?$
-  - What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue2>.*)\s?\?$
-  - What is the average (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) per (?P<singular_xlabel>.*)\s?\?$
-  - In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\s?\?$
-  - In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) and (?P<ylabel2>.*)\s?\?$
-  - What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue>.*)\s?\?$
-  - In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
-  - Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
-  - What is the ratio of the (?P<ylabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\s?\?$
-  - Is the (?P<ylabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
-  - In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\s?\?$
-  - What is the ratio of the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\s?\?$
-  - Is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\s?\?$
-  - Is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between any two (?P<plural_xlabel>.*)\s?\?$
-  - What is the difference between the highest and the second highest (?P<ylabel>.*)\s?\?$
-  - Is the sum of the (?P<ylabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
-  - What is the difference between the highest and the lowest (?P<ylabel>.*)\s?\?$
-  - In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) greater than the average (?P<ylabel2>.*) taken over all (?P<plural_xlabel2>.*)\s?\?$
-  - Is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue3>.*) and (?P<xvalue4>.*)\s?\?$
-  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<legendlabel>.*) is greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\s?\?$
-  - Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition>of|in) (?P<legendlabel1>.*) and (?P<legendlabel2>.*) is greater than the sum of (?P<ylabel2>.*) of (?P<legendlabel3>.*) and (?P<ylabel3>.*) of (?P<legendlabel4>.*)\s?\?$
-  - In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) greater than the average (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) taken over all (?P<plural_xlabel2>.*)\s?\?$
-  - What is the difference between the highest and the lowest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
-  - What is the difference between the highest and the second highest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\s?\?$
-  - Is the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) across all (?P<plural_xlabel>.*)\s?\?$
+- id: 1
+  regex: "Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates:
+    - ""
+  type: "binary"
+- id: 2
+  regex: "What is the (?P<yvalue>.*) (?P<preposition>of|in) (?P<xvalue>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates:
+    - "The {{ yvalue }} {{ preposition }} {{ xvalue }} is {{ answer }}."
+    - "{% if preposition == 'in' %}
+       In {{ xvalue }}, the {{ yvalue }} is {{ answer }}.
+       {% else %}
+       The {{ yvalue }} {{ preposition }} {{ xvalue }} is {{ answer }}.
+       {% end %}"
+    - "{{ answer }} is the {{ yvalue }} {{ preposition }} {{ xvalue }}."
+  type: "retrieval"
+- id: 3
+  regex: "Is the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) across all (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 4
+  regex: "What is the difference between the highest and the second highest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 5
+  regex: "What is the difference between the highest and the lowest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 6
+  regex: "In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) greater than the average (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) taken over all (?P<plural_xlabel2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 7
+  regex: "Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition>of|in) (?P<legendlabel1>.*) and (?P<legendlabel2>.*) is greater than the sum of (?P<ylabel2>.*) of (?P<legendlabel3>.*) and (?P<ylabel3>.*) of (?P<legendlabel4>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 8
+  regex: "Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<legendlabel>.*) is greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 9
+  regex: "Is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue3>.*) and (?P<xvalue4>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 10
+  regex: "In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) greater than the average (?P<ylabel2>.*) taken over all (?P<plural_xlabel2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 11
+  regex: "What is the difference between the highest and the lowest (?P<ylabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 12
+  regex: "Is the sum of the (?P<ylabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) across all (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 13
+  regex: "What is the (?P<yvalue>.*) of the ith (?P<legendlabel>.*) in (?P<xvalue>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 14
+  regex: "Does the (?P<ylabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 15
+  regex: "What is the difference between the highest and the second highest (?P<ylabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 16
+  regex: "Is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between any two (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 17
+  regex: "Is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 18
+  regex: "What is the ratio of the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\\s?\\?$"
+  template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}"
+  caption_templates:
+    - "The ratio of the {{ metric }} in {{ xvalue1 }} to that in {{ xvalue2 }} is {{ answer }}."
+    - "{% if answer > 1 %}
+       The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by a factor of {{ answer }}.
+       {% elif answer == 1 %}
+       The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.
+       {% else %}
+       The {{ metric }} in {{ xvalue1 }} is less than that in {{ xvalue2 }} by a factor of {{ answer }}.
+       {% end %}"
+    - "{% if answer > 1 %}
+       The {{ metric }} in {{ xvalue1 }} is {{ answer }} times greater than that in {{ xvalue2 }}.
+       {% elif answer == 1 %}
+       The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.
+       {% else %}
+       The {{ metric }} in {{ xvalue2 }} is {{ 1 / answer }} times greater than that in {{ xvalue1 }}.
+       {% end %}"
+  type: "retrieval"
+- id: 19
+  regex: "In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 20
+  regex: "Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 21
+  regex: "Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly less than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 22
+  regex: "Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 23
+  regex: "Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 24
+  regex: "In which (?P<xlabel>.*) was the (?P<ylabel>.*) maximum\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 25
+  regex: "In which (?P<xlabel>.*) was the (?P<ylabel>.*) minimum\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 26
+  regex: "Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 27
+  regex: "Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 28
+  regex: "In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) maximum\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 29
+  regex: "In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) minimum\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 30
+  regex: "What is the sum of (?P<title>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 31
+  regex: "What is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 32
+  regex: "What is the average (?P<ylabel>.*) per (?P<singular_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 33
+  regex: "What is the median (?P<ylabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 34
+  regex: "What is the total (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in the graph\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 35
+  regex: "What is the average (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) per (?P<singular_xlabel>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 36
+  regex: "Is the (?P<ylabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 37
+  regex: "What is the difference between the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) and that in (?P<xvalue2>.*)\\s?\\?$"
+  template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}"
+  caption_templates:
+    - "{% if answer == 0 %}
+      There is no difference between the {{ metric }} in {{ xvalue1 }} and that in {{ xvalue2 }}.
+      {% else if answer > 0 %}
+      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
+      {% else %}
+      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
+      {% end %}"
+    - "{% if answer == 0 %}
+      There is no difference between the {{ metric }} in {{ xvalue2 }} and that in {{ xvalue1 }}.
+      {% else if answer > 0 %}
+      The {{ metric }} in {{ xvalue2 }} is less than that in {{ xvalue1 }} by {{ answer }}.
+      {% else %}
+      The {{ metric }} in {{ xvalue1 }} is less than that in {{ xvalue2 }} by {{ -1 * answer }}.
+      {% end %}"
+    - "{% if answer == 0 %}
+      The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.
+      {% else if answer > 0 %}
+      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
+      {% else %}
+      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
+      {% end %}"
+    - "{% if answer == 0 %}
+      The {{ metric }} in {{ xvalue2 }} is equal to that in {{ xvalue1 }}.
+      {% else if answer > 0 %}
+      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
+      {% else %}
+      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
+      {% end %}"
+    - "{% if answer == 0 %}
+      The {{ metric }} in {{ xvalue1 }} is the same as that in {{ xvalue2 }}.
+      {% else if answer > 0 %}
+      The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.
+      {% else %}
+      The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.
+      {% end %}"
+  type: "retrieval"
+- id: 38
+  regex: "What is the ratio of the (?P<ylabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 39
+  regex: "What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue2>.*)\\s?\\?$"
+  template_header: "{% set X = f'{ylabel1} {preposition1} {legendlabel1} in {xvalue1}' %}
+                    {% set Y = f'{ylabel2} {preposition2} {legendlabel2} in {xvalue2}' %}"
+  caption_templates:
+    - "The difference between the {{ X }} and the {{ Y }} is {{ answer }}."
+    - "The {{ X }} and the {{ Y }} differ by {{ answer }}."
+    - "The difference between the {{ Y }} and the {{ X }} is {{ answer }}."
+    - "The {{ Y }} and the {{ X }} differ by {{ answer }}."
+    - "{{ answer }} is the difference between the {{ X }} and the {{ Y }}."
+    - "{{ answer }} is the difference between the {{ Y }} and the {{ X }}."
+  type: "retrieval"
+- id: 40
+  regex: "Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "binary"
+- id: 41
+  regex: "In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 42
+  regex: "In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 43
+  regex: "In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) and (?P<ylabel2>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
+- id: 44
+  regex: "What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: ""
+  type: "retrieval"
