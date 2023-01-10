@@ -1,8 +1,8 @@
 - id: 1
   regex: "Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates:
-    - ""
+  template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}
+                    {% set group = pluralize(plural_xlabel) %}"
+  caption_templates: randomize_1
   type: "binary"
 - id: 2
   regex: "What is the (?P<yvalue>.*) (?P<preposition>of|in) (?P<xvalue>.*)\\s?\\?$"
@@ -18,8 +18,12 @@
   type: "retrieval"
 - id: 3
   regex: "Is the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) across all (?P<plural_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set metric1 = f'{ylabel1} {preposition1} {legendlabel1}' %}
+     {% set metric2 = f'{ylabel2} {preposition2} {legendlabel2}' %}
+     {% set x1, x2 = xvalue1, xvalue2 %}
+     {% set groups = pluralize(plural_xlabel) %}"
+  caption_templates: captions.randomize_3
   type: "binary"
 - id: 4
   regex: "What is the difference between the highest and the second highest (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
@@ -33,38 +37,58 @@
   type: "retrieval"
 - id: 6
   regex: "In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) greater than the average (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) taken over all (?P<plural_xlabel2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set group1, group2 = pluralize(plural_xlabel), pluralize(plural_xlabel2) %}
+     {% set X, Y = f'{ylabel1} {preposition1} {legendlabel1}', f'{ylabel2} {preposition2} {legendlabel2}' %}
+    "
+  caption_templates: captions.randomize_6
   type: "retrieval"
 - id: 7
   regex: "Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition>of|in) (?P<legendlabel1>.*) and (?P<legendlabel2>.*) is greater than the sum of (?P<ylabel2>.*) of (?P<legendlabel3>.*) and (?P<ylabel3>.*) of (?P<legendlabel4>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set group = singular_xlabel %}
+     {% set metric = f'{ylabel1} {preposition} {legendlabel1} and {legendlabel2}' %}
+     {% set X, Y = f'{ylabel2} of {legendlabel3}', '{ylabel3} of {legendlabel4}' %}
+    "
+  caption_templates: captions.randomize_7
   type: "binary"
 - id: 8
   regex: "Is it the case that in every (?P<singular_xlabel>.*), the sum of the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<legendlabel>.*) is greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set group = singular(singular_xlabel) %}
+                    {% set X = f'{ylabel1} {preposition1} {legendlabel1}' %}
+                    {% set Y = legendlabel %}
+                    {% set Z = f'{ylabel2} {preposition2} {legendlabel2}' %}"
+  caption_templates: captions.randomize_8
   type: "binary"
 - id: 9
   regex: "Is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue3>.*) and (?P<xvalue4>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set X = f'{ylabel1} {preposition1} {legendlabel1}' %}
+     {% set Y = f'{ylabel1} {preposition1} {legendlabel1}' %}
+     {% set group1, group2, group3, group4 = xvalue1, xvalue2, xvalue3, xvalue4 %}
+    "
+  caption_templates: captions.randomize_9
   type: "binary"
 - id: 10
   regex: "In how many (?P<plural_xlabel1>.*), is the (?P<ylabel1>.*) greater than the average (?P<ylabel2>.*) taken over all (?P<plural_xlabel2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set groups, metric = plural_xlabel1, ylabel1 %}"
+  caption_templates:
+    - "The {{ metric }} is greater than the average in {{ answer }} {{ groups }}."
+    - "In {{ answer }} {{ groups }}, the {{ metric }} is greater than the average {{ metric }} taken over all {{ groups }}."
+    - "The {{ metric }} is higher than the average in {{ answer }} {{ groups }}."
+    - "In {{ answer }} {{ groups }}, the {{ metric }} is higher than the average {{ metric }} taken over all {{ groups }}."
+    - "The {{ metric }} is more than the average in {{ answer }} {{ groups }}."
+    - "In {{ answer }} {{ groups }}, the {{ metric }} is more than the average {{ metric }} taken over all {{ groups }}."
   type: "retrieval"
 - id: 11
   regex: "What is the difference between the highest and the lowest (?P<ylabel>.*)\\s?\\?$"
   template_header: ""
-  caption_templates: ""
+  caption_templates: captions.randomize_11
   type: "retrieval"
 - id: 12
   regex: "Is the sum of the (?P<ylabel1>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the maximum (?P<ylabel2>.*) across all (?P<plural_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set m1, X, Y, m2, groups = ylabel1, xvalue1, xvalue2, plural_xlabel %}"
+  caption_templates: captions.randomize_12
   type: "binary"
 - id: 13
   regex: "What is the (?P<yvalue>.*) of the ith (?P<legendlabel>.*) in (?P<xvalue>.*)\\s?\\?$"
@@ -74,22 +98,24 @@
 - id: 14
   regex: "Does the (?P<ylabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\\s?\\?$"
   template_header: ""
-  caption_templates: ""
+  caption_templates: captions.randomize_14
   type: "binary"
 - id: 15
   regex: "What is the difference between the highest and the second highest (?P<ylabel>.*)\\s?\\?$"
   template_header: ""
-  caption_templates: ""
+  caption_templates: captions.randomize_15
   type: "retrieval"
 - id: 16
   regex: "Is the difference between the (?P<ylabel>.*) in (?P<xvalue1>.*) and (?P<xvalue2>.*) greater than the difference between any two (?P<plural_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set metric, X, Y, groups = ylabel, xvalue1, xvalue2, plural_xlabel %} "
+  caption_templates: captions.randomize_16
   type: "binary"
 - id: 17
   regex: "Is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set metric, X, Y = f'{ylabel} {preposition} {legendlabel}', xvalue1, xvalue2 %}"
+  caption_templates: captions.randomize_17
   type: "binary"
 - id: 18
   regex: "What is the ratio of the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) to that in (?P<xvalue2>.*)\\s?\\?$"
@@ -98,58 +124,114 @@
   type: "retrieval"
 - id: 19
   regex: "In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set groups = pluralize(plural_xlabel) %}
+                    {% set metric = f'{ylabel} {preposition} {legendlabel}' %}
+                    {% set value = f'{integer} {unit}' %}"
+  caption_templates: captions.randomize_19
   type: "retrieval"
 - id: 20
   regex: "Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly greater than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set X = f'{ylabel1} {preposition1} {legendlabel1}' %}
+     {% set Y = f'{ylabel2} {preposition2} {legendlabel2}' %}
+     {% set groups = pluralize(plural_xlabel) %}"
+  caption_templates: captions.randomize_20
   type: "binary"
 - id: 21
   regex: "Is the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) strictly less than the (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) over the (?P<plural_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set X = f'{ylabel1} {preposition1} {legendlabel1}' %}
+                    {% set Y = f'{ylabel1} {preposition1} {legendlabel1}' %}
+                    {% set groups = plural_xlabel %}"
+  caption_templates: captions.randomize_21
   type: "binary"
 - id: 22
   regex: "Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set group, metric = singular(plural_xlabel), ylabel %}"
+  caption_templates:
+    - "Across all {{ plural(groups) }}, the maximum {{ metric }} is {{ answer }}."
+    - "Across all {{ plural(groups) }}, the greatest {{ metric }} is {{ answer }}."
+    - "Across all {{ plural(groups) }}, the highest {{ metric }} is {{ answer }}."
+    - "The maximum {{ metric }} across all {{ plural(groups) }} is {{ answer }}."
+    - "The highest {{ metric }} across all {{ plural(groups) }} is {{ answer }}."
+    - "The greatest {{ metric }} across all {{ plural(groups) }} is {{ answer }}."
   type: "retrieval"
 - id: 23
   regex: "Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set group, metric = singular(plural_xlabel), ylabel %}"
+  caption_templates:
+    - "Across all {{ plural(groups) }}, the minimum {{ metric }} is {{ answer }}."
+    - "Across all {{ plural(groups) }}, the lowest {{ metric }} is {{ answer }}."
+    - "Across all {{ plural(groups) }}, the least {{ metric }} is {{ answer }}."
+    - "The minimum {{ metric }} across all {{ plural(groups) }} is {{ answer }}."
+    - "The lowest {{ metric }} across all {{ plural(groups) }} is {{ answer }}."
+    - "The least {{ metric }} across all {{ plural(groups) }} is {{ answer }}."
   type: "retrieval"
 - id: 24
   regex: "In which (?P<xlabel>.*) was the (?P<ylabel>.*) maximum\\s?\\?$"
   template_header: ""
-  caption_templates: ""
+  caption_templates:
+    - "The {{ ylabel }} was the maximum in the {{ answer }} {{ xlabel }}."
+    - "The {{ ylabel }} was the highest in the {{ answer }} {{ xlabel }}."
+    - "The {{ ylabel }} was the greatest in the {{ answer }} {{ xlabel }}."
   type: "retrieval"
 - id: 25
   regex: "In which (?P<xlabel>.*) was the (?P<ylabel>.*) minimum\\s?\\?$"
   template_header: ""
-  caption_templates: ""
+  caption_templates:
+    - "The {{ ylabel }} was the minimum in the {{ answer }} {{ xlabel }}."
+    - "The {{ ylabel }} was the lowest in the {{ answer }} {{ xlabel }}."
+    - "The {{ ylabel }} was the least in the {{ answer }} {{ xlabel }}."
   type: "retrieval"
 - id: 26
   regex: "Across all (?P<plural_xlabel>.*), what is the maximum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}
+                    {% set group = pluralize(plural_xlabel) %}"
+  caption_templates:
+    - "Across {{ group }}, the maximum {{ metric }} is {{ answer }}."
+    - "The maximum {{ metric }} across all {{ group }} is {{ answer }}."
+    - "The maximum {{ metric }} across {{ group }} is {{ answer }}."
+    - "Across {{ group }}, the highest {{ metric }} is {{ answer }}."
+    - "The highest {{ metric }} across all {{ group }} is {{ answer }}."
+    - "The highest {{ metric }} across {{ group }} is {{ answer }}."
   type: "retrieval"
 - id: 27
   regex: "Across all (?P<plural_xlabel>.*), what is the minimum (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}
+                    {% set group = pluralize(plural_xlabel) %}"
+  caption_templates:
+    - "Across {{ group }}, the minimum {{ metric }} is {{ answer }}."
+    - "The minimum {{ metric }} across all {{ group }} is {{ answer }}."
+    - "The minimum {{ metric }} across {{ group }} is {{ answer }}."
+    - "Across {{ group }}, the lowest {{ metric }} is {{ answer }}."
+    - "The least {{ metric }} across all {{ group }} is {{ answer }}."
+    - "The least {{ metric }} across {{ group }} is {{ answer }}."
+    - "The lowest {{ metric }} across {{ group }} is {{ answer }}."
   type: "retrieval"
 - id: 28
   regex: "In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) maximum\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set metric, group = f'{ylabel} {preposition} {legendlabel}', singular(singular_xlabel)%}"
+  caption_templates:
+    - "The {{ metric }} was the highest in the {{ answer }} {{ group }}."
+    - "The {{ metric }} was the greatest in the {{ answer }} {{ group }}."
+    - "The {{ metric }} was the maximum in the {{ answer }} {{ group }}."
+    - "The {{ metric }} in the {{ answer }} {{ group }} was the highest."
+    - "The {{ metric }} in the {{ answer }} {{ group }} was the greatest."
+    - "The {{ metric }} in the {{ answer }} {{ group }} was the maximum."
   type: "retrieval"
 - id: 29
   regex: "In which (?P<singular_xlabel>.*) was the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) minimum\\s?\\?$"
-  template_header: ""
+  template_header: |
+    "{% set metric, group = f'{ylabel} {preposition} {legendlabel}', singular(singular_xlabel)%}"
   caption_templates: ""
+    - "The {{ metric }} was the lowest in the {{ answer }} {{ group }}."
+    - "The {{ metric }} was the least in the {{ answer }} {{ group }}."
+    - "The {{ metric }} was the minimum in the {{ answer }} {{ group }}."
+    - "The {{ metric }} in the {{ answer }} {{ group }} was the lowest."
+    - "The {{ metric }} in the {{ answer }} {{ group }} was the least."
+    - "The {{ metric }} in the {{ answer }} {{ group }} was the minimum."
   type: "retrieval"
 - id: 30
   regex: "What is the sum of (?P<title>.*)\\s?\\?$"
@@ -163,13 +245,18 @@
   type: "retrieval"
 - id: 32
   regex: "What is the average (?P<ylabel>.*) per (?P<singular_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: |
+    "{% set metric, group = ylabel, singular(singular_xlabel) %}"
+  caption_templates:
+    - "The average {{ metric }} per {{ group }} is {{ answer }}."
+    - "The mean {{ metric }} per {{ group }} is {{ answer }}."
+    - "The average {{ metric }} across {{ plural(group) }} is {{ answer }}."
+    - "The mean {{ metric }} across {{ plural(group) }} is {{ answer }}."
   type: "retrieval"
 - id: 33
   regex: "What is the median (?P<ylabel>.*)\\s?\\?$"
   template_header: ""
-  caption_templates: ""
+  caption_templates: "The median {{ ylabel }} is {{ answer }}."
   type: "retrieval"
 - id: 34
   regex: "What is the total (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in the graph\\s?\\?$"
@@ -178,13 +265,18 @@
   type: "retrieval"
 - id: 35
   regex: "What is the average (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) per (?P<singular_xlabel>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}
+                    {% set group = singular(singular_xlabel) %}"
+  caption_templates:
+    - "The average {{ metric }} per {{ group }} is {{ answer }}."
+    - "The mean {{ metric }} per {{ group }} is {{ answer }}."
+    - "The average per {{ group }} {{ metric }} is {{ answer }}."
+    - "The mean per {{ group }} {{ metric }} is {{ answer }}."
   type: "retrieval"
 - id: 36
   regex: "Is the (?P<ylabel>.*) in (?P<xvalue1>.*) less than that in (?P<xvalue2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set metric, X, Y = ylabel, xvalue1, xvalue2 %}"
+  caption_templates: captions.randomize_36
   type: "binary"
 - id: 37
   regex: "What is the difference between the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) in (?P<xvalue1>.*) and that in (?P<xvalue2>.*)\\s?\\?$"
@@ -209,21 +301,33 @@
   type: "binary"
 - id: 41
   regex: "In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set groups, metrics, threshold = plural_xlabel, ylabel, f'{integer} {unit}'%}"
+  caption_templates:
+    - "The {{ metric }} is greater than {{ threshold }} in {{ answer }} {{ groups }}."
+    - "The {{ metric }} is higher than {{ threshold }} in {{ answer }} {{ groups }}."
+    - "The {{ metric }} is more than {{ threshold }} in {{ answer }} {{ groups }}."
+    - "In {{ answer }} {{ groups }}, the {{ metric }} is greater than {{ threshold }}."
+    - "In {{ answer }} {{ groups }}, the {{ metric }} is higher than {{ threshold }}."
+    - "In {{ answer }} {{ groups }}, the {{ metric }} is more than {{ threshold }}."
   type: "retrieval"
 - id: 42
   regex: "In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set year = xvalue %}
+                    {% set X = f'{ylabel1} {preposition1} {legendlabel1}'% }
+                    {% set Y = f'{ylabel2} {preposition2} {legendlabel2}'% }"
+  caption_templates: captions.randomize_42
   type: "retrieval"
 - id: 43
   regex: "In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) and (?P<ylabel2>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set year, X, Y = xvalue, ylabel1, ylabel2 %}"
+  caption_templates:
+    - "The difference between {{ X }} and {{ Y }} is {{ answer }} in year {{ year }}."
+    - "In year {{ year }}, the difference between {{ X }} and {{ Y }} is {{ answer }}."
+    - "The difference between {{ X }} and {{ Y }} in year {{ year }} is {{ answer }}."
   type: "retrieval"
 - id: 44
   regex: "What is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*) in (?P<xvalue>.*)\\s?\\?$"
-  template_header: ""
-  caption_templates: ""
+  template_header: "{% set X = f'{ylabel1} {preposition1} {legendlabel1}'% }
+                    {% set Y = f'{ylabel2} {preposition2} {legendlabel2}'% }"
+  caption_templates: captions.randomize_44
   type: "retrieval"
