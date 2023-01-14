@@ -1,6 +1,12 @@
 from random import choice
 
 
+def coerce_input(T):
+    def converter(func):
+        return lambda x: func(T(x))
+    return converter
+
+
 def binary_check(func):
     def validate(arg):
         if arg.lower() not in {"yes", "no"}:
@@ -11,6 +17,7 @@ def binary_check(func):
     return validate
 
 
+@coerce_input(float)
 def randomize_18(answer):
     """The ratio of the metric in xvalue1 to that in xval2 is answer."""
     equals = [
@@ -39,6 +46,8 @@ def randomize_18(answer):
         "The ratio of the {{ metric }} in {{ xvalue2 }} to that in {{ xvalue1 }} "
         "is {{ 1 / answer }}."
     ]
+    if answer == 0:
+        return "The {{ metric }} in {{ xvalue1 }} is zero."
     if answer == 1:
         return choice(equals)
     if answer > 1:
@@ -46,6 +55,7 @@ def randomize_18(answer):
     return choice(lessers)
 
 
+@coerce_input(float)
 def randomize_37(answer):
     """The difference between the metric in x1 and that in x2 is answer."""
     equals = [  # metric == 0
@@ -83,6 +93,7 @@ def randomize_37(answer):
     return choice(lessers)
 
 
+@coerce_input(float)
 def randomize_39(answer):
     """The difference between X and Y is answer.""",
     greaters = [
@@ -115,12 +126,13 @@ def randomize_39(answer):
     if answer == 0:
         return choice(equals)
     if answer > 0:
-        choices = choice(unequals, greaters)
+        choices = choice([unequals, greaters])
         return choice(choices)
-    choices = choice(unequals, lessers)
+    choices = choice([unequals, lessers])
     return choice(choices)
 
 
+@coerce_input(float)
 def randomize_42(answer):
     """In the year y, what is the difference between the X and the Y?"""
     equals = [
@@ -180,6 +192,7 @@ def randomize_42(answer):
     return choice(lessers)
 
 
+@coerce_input(float)
 def randomize_44(answer):
     """What is the difference between the X and the Y in xvalue?"""
     equals = [
@@ -264,9 +277,9 @@ def randomize_6(answer):
         "The {{ X }} is never higher than the average {{ Y }}.",
     ]
     others = [
-        "The {{ X }} is greater than the average {{ Y }} in {{ answer }} {{ groups1 }}.",
-        "The {{ X }} is more than the average {{ Y }} in {{ answer }} {{ groups1 }}.",
-        "The {{ X }} is higher than the average {{ Y }} in {{ answer }} {{ groups1 }}.",
+        "The {{ X }} is greater than the average {{ Y }} in {{ answer }} {{ group1 }}.",
+        "The {{ X }} is more than the average {{ Y }} in {{ answer }} {{ group1 }}.",
+        "The {{ X }} is higher than the average {{ Y }} in {{ answer }} {{ group1 }}.",
     ]
     if answer == 0:
         return choice(zeros)
@@ -408,7 +421,7 @@ def randomize_15(answer):
     diff = [
         "The difference between the highest and second highest {{ ylabel }} is {{ answer }}.",
         "The highest and the second highest {{ ylabel }} differ by {{ answer }}.",
-        "The top two {{ plural(ylabel) }} differ by {{ answer }}.",
+        "The top two {{ ylabel }} differ by {{ answer }}.",
     ]
     if answer == 0:
         return choice(nodiff)
