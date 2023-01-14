@@ -1,13 +1,13 @@
-# flake8: noqa
 from random import choice
 
 
 def binary_check(func):
     def validate(arg):
-        if arg.lower() not in {'yes', 'no'}:
-            t_id = func.__name__.split('_')[1]
-            raise ValueError(f'Invalid answer {arg} for template ID {t_id}.')
+        if arg.lower() not in {"yes", "no"}:
+            t_id = func.__name__.split("_")[1]
+            raise ValueError(f"Invalid answer {arg} for template ID {t_id}.")
         return func(arg)
+
     return validate
 
 
@@ -17,19 +17,27 @@ def randomize_18(answer):
         "The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.",
         "The {{ metric }} in {{ xvalue2 }} is equal to that in {{ xvalue1 }}.",
         "The {{ metric }} in {{ xvalue1 }} is the same as that in {{ xvalue2 }}.",
-        "The {{ metric }} in {{ xvalue2 }} is the same as that in {{ xvalue1 }}."
+        "The {{ metric }} in {{ xvalue2 }} is the same as that in {{ xvalue1 }}.",
     ]
     greaters = [  # xvalue1 / xvalue2 > 1
-        "The {{ metric }} in {{ xvalue1 }} is {{ answer }} times greater than that in {{ xvalue2 }}.",
-        "The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by a factor of {{ answer }}.",
-        "The ratio of the {{ metric }} in {{ xvalue1 }} to that in {{ xvalue2 }} is {{ answer }}.",
-        "The ratio of the {{ metric }} in {{ xvalue2 }} to that in {{ xvalue1 }} is {{ 1 / answer }}."
+        "The {{ metric }} in {{ xvalue1 }} is {{ answer }} times greater than "
+        "that in {{ xvalue2 }}.",
+        "The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} "
+        "by a factor of {{ answer }}.",
+        "The ratio of the {{ metric }} in {{ xvalue1 }} to that in {{ xvalue2 }} "
+        "is {{ answer }}.",
+        "The ratio of the {{ metric }} in {{ xvalue2 }} to that in {{ xvalue1 }} "
+        "is {{ 1 / answer }}.",
     ]
     lessers = [  # xvalue1 / xvalue2 < 1
-        "The {{ metric }} in {{ xvalue2 }} is {{ 1 / answer }} times greater than that in {{ xvalue1 }}.",
-        "The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by a factor of {{ 1 / answer }}.",
-        "The ratio of the {{ metric }} in {{ xvalue1 }} to that in {{ xvalue2 }} is {{ answer }}.",
-        "The ratio of the {{ metric }} in {{ xvalue2 }} to that in {{ xvalue1 }} is {{ 1 / answer }}."
+        "The {{ metric }} in {{ xvalue2 }} is {{ 1 / answer }} times greater than "
+        "that in {{ xvalue1 }}.",
+        "The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by "
+        "a factor of {{ 1 / answer }}.",
+        "The ratio of the {{ metric }} in {{ xvalue1 }} to that in {{ xvalue2 }} "
+        "is {{ answer }}.",
+        "The ratio of the {{ metric }} in {{ xvalue2 }} to that in {{ xvalue1 }} "
+        "is {{ 1 / answer }}."
     ]
     if answer == 1:
         return choice(equals)
@@ -41,26 +49,32 @@ def randomize_18(answer):
 def randomize_37(answer):
     """The difference between the metric in x1 and that in x2 is answer."""
     equals = [  # metric == 0
-        "There is no difference between the {{ metric }} in {{ xvalue1 }} and that in {{ xvalue2 }}.",
-        "There is no difference between the {{ metric }} in {{ xvalue2 }} and that in {{ xvalue1 }}.",
+        "There is no difference between the {{ metric }} in {{ xvalue1 }} "
+        "and that in {{ xvalue2 }}.",
+        "There is no difference between the {{ metric }} in {{ xvalue2 }} and that in "
+        "{{ xvalue1 }}.",
         "The {{ metric }} in {{ xvalue1 }} is equal to that in {{ xvalue2 }}.",
         "The {{ metric }} in {{ xvalue2 }} is equal to that in {{ xvalue1 }}.",
         "The {{ metric }} in {{ xvalue2 }} is the same as that in {{ xvalue1 }}.",
-        "The {{ metric }} in {{ xvalue1 }} is the same as that in {{ xvalue2 }}."
+        "The {{ metric }} in {{ xvalue1 }} is the same as that in {{ xvalue2 }}.",
     ]
     greaters = [  # metric > 0
         "The {{ metric }} in {{ xvalue1 }} exceeds that in {{ xvalue2 }} by {{ answer }}.",
         "The {{ metric }} in {{ xvalue1 }} is greater than that in {{ xvalue2 }} by {{ answer }}.",
         "The {{ metric }} in {{ xvalue2 }} is less than that in {{ xvalue1 }} by {{ answer }}.",
         "The {{ metric }} in {{ xvalue1 }} is {{ answer }} more than that in {{ xvalue2 }}.",
-        "The difference between the {{ metric }} in {{ xvalue1 }} and that in {{ xvalue2 }} is {{ answer }}."
+        "The difference between the {{ metric }} in {{ xvalue1 }} and that in {{ xvalue2 }} "
+        "is {{ answer }}.",
     ]
     lessers = [  # metric < 0
         "The {{ metric }} in {{ xvalue2 }} exceeds that in {{ xvalue1 }} by {{ -1 * answer }}.",
-        "The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by {{ -1 * answer }}.",
-        "The {{ metric }} in {{ xvalue1 }} is less than that in {{ xvalue2 }} by {{ -1 * answer }}.",
+        "The {{ metric }} in {{ xvalue2 }} is greater than that in {{ xvalue1 }} by "
+        "{{ -1 * answer }}.",
+        "The {{ metric }} in {{ xvalue1 }} is less than that in {{ xvalue2 }} by "
+        "{{ -1 * answer }}.",
         "The {{ metric }} in {{ xvalue2 }} is {{ -1 * answer }} more than that in {{ xvalue1 }}.",
-        "The difference between the {{ metric }} in {{ xvalue2 }} and that in {{ xvalue1 }} is {{ -1 * answer }}."
+        "The difference between the {{ metric }} in {{ xvalue2 }} and that in {{ xvalue1 }} is "
+        "{{ -1 * answer }}.",
     ]
     if answer == 0:
         return choice(equals)
@@ -75,12 +89,12 @@ def randomize_39(answer):
         "The {{ X }} is higher than the {{ Y }} by {{ answer }}.",
         "The {{ X }} is greater than the {{ Y }} by {{ answer }}.",
         "The {{ X }} exceeds the {{ Y }} by {{ answer }}.",
-        "The {{ Y }} is less than the {{ X }} by {{ answer }}."
+        "The {{ Y }} is less than the {{ X }} by {{ answer }}.",
     ]
     lessers = [
         "The {{ Y }} is higher than the {{ X }} by {{ answer }}.",
         "The {{ Y }} is greater than the {{ X }} by {{ answer }}.",
-        "The {{ Y }} exceeds the {{ X }} by {{ answer }}."
+        "The {{ Y }} exceeds the {{ X }} by {{ answer }}.",
     ]
     unequals = [
         "The difference between the {{ X }} and the {{ Y }} is {{ answer }}.",
@@ -88,7 +102,7 @@ def randomize_39(answer):
         "The difference between the {{ Y }} and the {{ X }} is {{ answer }}.",
         "The {{ Y }} and the {{ X }} differ by {{ answer }}.",
         "{{ answer }} is the difference between the {{ X }} and the {{ Y }}.",
-        "{{ answer }} is the difference between the {{ Y }} and the {{ X }}."
+        "{{ answer }} is the difference between the {{ Y }} and the {{ X }}.",
     ]
     equals = [
         "The {{ X }} is equal to the {{ Y }}.",
@@ -96,7 +110,7 @@ def randomize_39(answer):
         "The {{ X }} is the same as the {{ Y }}.",
         "The {{ Y }} is the same as the {{ X }}.",
         "There is no difference between the {{ X }} and the {{ Y }}.",
-        "There is no difference between the {{ Y }} and the {{ X }}."
+        "There is no difference between the {{ Y }} and the {{ X }}.",
     ]
     if answer == 0:
         return choice(equals)
@@ -129,7 +143,7 @@ def randomize_42(answer):
         "There is no difference between the {{ Y }} and the {{ X }} in {{ year }}.",
         "There is no difference between the {{ Y }} and the {{ X }} in the year {{ year }}.",
         "In the year {{ year }}, there is no difference between the {{ Y }} and the {{ X }}.",
-        "In {{ year }}, there is no difference between the {{ Y }} and the {{ X }}."
+        "In {{ year }}, there is no difference between the {{ Y }} and the {{ X }}.",
     ]
     greaters = [
         "In {{ year }}, the difference between the {{ X }} and the {{ Y }} is {{ answer }}.",
@@ -140,7 +154,6 @@ def randomize_42(answer):
         "The difference between the {{ X }} and the {{ Y }} is {{ answer }} in the {{ year }}.",
         "The {{ X }} is greater than the {{ Y }} by {{ answer }} in {{ year }}.",
         "The {{ X }} is greater than the {{ Y }} by {{ answer }} in the year {{ year }}.",
-
         "In {{ year }}, the {{ Y }} is less than the {{ X }} by {{ answer }}.",
         "In the year {{ year }}, the {{ Y }} is less than the {{ X }} by {{ answer }}.",
         "The {{ Y }} is less than the {{ X }} by {{ answer }} in {{ year }}.",
@@ -155,7 +168,6 @@ def randomize_42(answer):
         "The difference between the {{ Y }} and the {{ X }} is {{ answer }} in the {{ year }}.",
         "The {{ Y }} is greater than the {{ X }} by {{ answer }} in {{ year }}.",
         "The {{ Y }} is greater than the {{ X }} by {{ answer }} in the year {{ year }}.",
-
         "In {{ year }}, the {{ X }} is less than the {{ Y }} by {{ answer }}.",
         "In the year {{ year }}, the {{ X }} is less than the {{ Y }} by {{ answer }}.",
         "The {{ X }} is less than the {{ Y }} by {{ answer }} in {{ year }}.",
@@ -189,7 +201,7 @@ def randomize_44(answer):
         "The {{ Y }} is less than the {{ X }} by {{ answer }}.",
         "The {{ X }} is {{ answer }} more than the {{ Y }}.",
         "The {{ X }} is {{ answer }} greater than the {{ Y }}.",
-        "The {{ Y }} is {{ answer }} less than the {{ X }}."
+        "The {{ Y }} is {{ answer }} less than the {{ X }}.",
     ]
     lessers = [
         "The difference between the {{ Y }} and the {{ X }} is {{ answer }}.",
@@ -198,13 +210,14 @@ def randomize_44(answer):
         "The {{ X }} is less than the {{ Y }} by {{ answer }}.",
         "The {{ Y }} is {{ answer }} more than the {{ X }}.",
         "The {{ Y }} is {{ answer }} greater than the {{ X }}.",
-        "The {{ X }} is {{ answer }} less than the {{ Y }}."
+        "The {{ X }} is {{ answer }} less than the {{ Y }}.",
     ]
     if answer == 0:
         return choice(equals)
     if answer > 0:
         return choice(greaters)
     return choice(lessers)
+
 
 @binary_check
 def randomize_1(answer):
@@ -221,7 +234,7 @@ def randomize_1(answer):
         "The {{ metric }} does not grow over the {{ group }}.",
         "The {{ metric }} does not increase over the {{ group }}.",
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -236,7 +249,7 @@ def randomize_19(answer):
     ]
     others = [
         "The {{ metric }} is greater than {{ value }} in {{ answer }} {{ groups }}.",
-        "In {{ answer }} {{ groups }}, the {{ metric }} is greater than {{ value }}."
+        "In {{ answer }} {{ groups }}, the {{ metric }} is greater than {{ value }}.",
     ]
     if answer == 0:
         return choice(zeroes)
@@ -245,10 +258,10 @@ def randomize_19(answer):
 
 def randomize_6(answer):
     """In how many groups1 is the X greater than the average Y taken over all groups2?"""
-    zeroes = [
+    zeros = [
         "The {{ X }} is never greater than the average {{ Y }}.",
         "In no {{ group1 }} is the {{ X }} greater than the average {{ Y }}.",
-        "The {{ X }} is never higher than the average {{ Y }}."
+        "The {{ X }} is never higher than the average {{ Y }}.",
     ]
     others = [
         "The {{ X }} is greater than the average {{ Y }} in {{ answer }} {{ groups1 }}.",
@@ -268,14 +281,14 @@ def randomize_17(answer):
         "The {{ metric }} in {{ X }} is lower than that in {{ Y }}.",
         "The {{ metric }} in {{ Y }} is more than that in {{ X }}.",
         "The {{ metric }} in {{ Y }} is greater than that in {{ X }}.",
-        "The {{ metric }} in {{ Y }} is higher than that in {{ X }}."
+        "The {{ metric }} in {{ Y }} is higher than that in {{ X }}.",
     ]
     nays = [
         "The {{ metric }} in {{ X }} is not lower than that in {{ Y }}.",
-        "The {{ metric }} in {{ X }} is not less than that in {{ Y }}."
+        "The {{ metric }} in {{ X }} is not less than that in {{ Y }}.",
     ]
-    if answer.lower() == 'yes':
-        return choice(yes)
+    if answer.lower() == "yes":
+        return choice(yays)
     return choice(nays)
 
 
@@ -284,18 +297,20 @@ def randomize_3(answer):
     """Is the sum of the {{metric1}} in {{ x1 }} and {{ x2 }} greater than the maximum
     {{metric2}} across all {{ groups }}?"""
 
-    adj1, adj2 = ('greater', 'higher', 'more'), ('highest', 'maximum', 'greatest')
-    yays_fmt = "The sum of the {{{{ metric1 }}}} in {{{{ x1 }}}} and {{{{ x2 }}}} is {a1} than the {a2} {{{{ metric2 }}}} across all {{{{ groups }}}}."
+    adj1, adj2 = ("greater", "higher", "more"), ("highest", "maximum", "greatest")
+    yays_fmt = "The sum of the {{{{ metric1 }}}} in {{{{ x1 }}}} and {{{{ x2 }}}} is {a1} " \
+        "than the {a2} {{{{ metric2 }}}} across all {{{{ groups }}}}."
     yays = []
     for a1 in adj1:
         for a2 in adj2:
             yays.append(yays_fmt.format(a1=a1, a2=a2))
-    nays_fmt = "The sum of the {{{{ metric1 }}}} in {{{{ x1 }}}} and {{{{ x2 }}}} is not {a1} than the {a2} {{{{ metric2 }}}} across all {{{{ groups }}}}."
+    nays_fmt = "The sum of the {{{{ metric1 }}}} in {{{{ x1 }}}} and {{{{ x2 }}}} is not " \
+        "{a1} than the {a2} {{{{ metric2 }}}} across all {{{{ groups }}}}."
     nays = []
     for a1 in adj1:
         for a2 in adj2:
             nays.append(nays_fmt.format(a1=a1, a2=a2))
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -312,12 +327,12 @@ def randomize_8(answer):
         "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is higher than the {{ Z }}."
         "The sum of the {{ X }} and {{ Y }} is more than the {{ Z }} in every {{ group }}.",
         "The sum of the {{ X }} and {{ Y }} is always more than the {{ Z }}.",
-        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is more than the {{ Z }}."
+        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is more than the {{ Z }}.",
     ]
     nays = [
         "The sum of the {{ X }} and {{ Y }} is not greater than the {{ Z }} in every {{ group }}."
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -358,7 +373,7 @@ def randomize_9(answer):
         "The difference between the {{ Y }} in {{ group3 }} and {{ group4 }} is equal to"
         " the difference between the {{ X }} in {{ group2 }} and {{ group1 }}.",
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -393,7 +408,7 @@ def randomize_15(answer):
     diff = [
         "The difference between the highest and second highest {{ ylabel }} is {{ answer }}.",
         "The highest and the second highest {{ ylabel }} differ by {{ answer }}.",
-        "The top two {{ plural(ylabel) }} differ by {{ answer }}."
+        "The top two {{ plural(ylabel) }} differ by {{ answer }}.",
     ]
     if answer == 0:
         return choice(nodiff)
@@ -411,13 +426,13 @@ def randomize_20(answer):
         "The {{ Y }} is strictly less than the {{ X }} over the {{ groups }}.",
         "Over the {{ groups }}, the {{ Y }} is strictly less than the {{ X }}.",
         "The {{ Y }} is strictly lower than the {{ X }} over the {{ groups }}.",
-        "Over the {{ groups }}, the {{ Y }} is strictly lower than the {{ X }}."
+        "Over the {{ groups }}, the {{ Y }} is strictly lower than the {{ X }}.",
     ]
     nays = [
         "The {{ X }} is not strictly greater than the {{ Y }} over the {{ groups }}.",
-        "Over the {{ groups }}, the {{ X }} is not strictly greater than the {{ Y }}."
+        "Over the {{ groups }}, the {{ X }} is not strictly greater than the {{ Y }}.",
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -430,12 +445,10 @@ def randomize_36(answer):
         "The {{ metric }} in {{ X }} is lower than that in {{ Y }}.",
         "The {{ metric }} in {{ Y }} is greater than that in {{ X }}.",
         "The {{ metric }} in {{ Y }} is higher than that in {{ X }}.",
-        "The {{ metric }} in {{ Y }} is more than that in {{ X }}."
+        "The {{ metric }} in {{ Y }} is more than that in {{ X }}.",
     ]
-    nays = [
-        "The {{ metric }} in {{ X }} is not less than that in {{ Y }}."
-    ]
-    if answer.lower() == 'yes':
+    nays = ["The {{ metric }} in {{ X }} is not less than that in {{ Y }}."]
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -452,13 +465,13 @@ def randomize_16(answer):
         "The difference between the {{ metric }} in {{ X }} and {{ Y }} is the "
         "greatest between any two groups.",
         "The difference between the {{ metric }} in {{ Y }} and {{ X }} is the "
-        "greatest between any two groups."
+        "greatest between any two groups.",
     ]
     nays = [
         "The difference between the {{ metric }} in {{ X }} and {{ Y }} is not greater than the "
         "difference between any two {{ groups }}."
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -472,13 +485,13 @@ def randomize_21(answer):
         "The {{ Y }} is strictly higher than the {{ X }} over the {{ groups }}.",
         "Over all {{ groups }}, the {{ X }} is strictly less than the {{ Y }}.",
         "Over all {{ groups }}, the {{ Y }} is strictly higher than the {{ X }}.",
-        "Over all {{ groups }}, the {{ Y }} is strictly greater than the {{ X }}."
+        "Over all {{ groups }}, the {{ Y }} is strictly greater than the {{ X }}.",
     ]
     nays = [
         "The {{ X }} is not strictly less than the {{ Y }} over the {{ groups }}.",
-        "The {{ Y }} is not strictly greater than the {{ X }} over the {{ groups }}."
+        "The {{ Y }} is not strictly greater than the {{ X }} over the {{ groups }}.",
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -519,7 +532,7 @@ def randomize_12(answer):
         "Across all {{ groups }}, the sum of the {{ m1 }} in {{ Y }} and {{ X }} is more than the "
         "highest {{ m2 }}.",
         "Across all {{ groups }}, the sum of the {{ m1 }} in {{ Y }} and {{ X }} is more than the "
-        "greatest {{ m2 }}."
+        "greatest {{ m2 }}.",
     ]
     nays = [
         "The sum of the {{ m1 }} in {{ X }} and {{ Y }} is not greater than the maximum {{ m2 }} "
@@ -545,9 +558,9 @@ def randomize_12(answer):
         "The sum of the {{ m1 }} in {{ Y }} and {{ X }} is not greater than the highest {{ m2 }} "
         "across all {{ groups }}.",
         "The sum of the {{ m1 }} in {{ Y }} and {{ X }} is not higher than the greatest {{ m2 }} "
-        "across all {{ groups }}."
+        "across all {{ groups }}.",
     ]
-    if answer.lower() == 'yes':
+    if answer.lower() == "yes":
         return choice(yays)
     return choice(nays)
 
@@ -580,7 +593,7 @@ def randomize_7(answer):
         "The sum of the {{ metric }} is higher than the sum of the {{ Y }} and {{ X }} "
         "in every {{ group }}.",
         "The sum of the {{ metric }} is more than the sum of the {{ Y }} and {{ X }} "
-        "in every {{ group }}."
+        "in every {{ group }}.",
     ]
     nays = [
         "The sum of the {{ metric }} is not greater than the sum of the {{ X }} and {{ Y }} "
@@ -594,7 +607,7 @@ def randomize_7(answer):
         "The sum of the {{ metric }} is not more than the sum of the {{ Y }} and {{ X }} "
         "in every {{ group }}.",
         "The sum of the {{ metric }} is not higher than the sum of the {{ Y }} and {{ X }} "
-        "in every {{ group }}."
+        "in every {{ group }}.",
     ]
     if answer.lower() == "yes":
         return choice(yays)
@@ -602,13 +615,12 @@ def randomize_7(answer):
 
 
 @binary_check
-def randomize_14(answer)
+def randomize_14(answer):
     """Does the {{ ylabel }} monotonically increase over the {{ plural_xlabel }}?"""
     if answer.lower() == "yes":
         return "The {{ ylabel }} monotonically increases over the {{ plural_xlabel }}."
     return "The {{ ylabel }} does not monotonically increases over the {{ plural_xlabel }}."
 
 
-
 if __name__ == "__main__":
-    print(randomize_3('foo'))
+    print(randomize_3("foo"))
