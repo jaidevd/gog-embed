@@ -2,7 +2,7 @@
   regex: "Does the (?P<ylabel>.*) (?P<preposition>of|in) (?P<legendlabel>.*) monotonically increase over the (?P<plural_xlabel>.*)\\s?\\?$"
   template_header: "{% set metric = f'{ylabel} {preposition} {legendlabel}' %}
                     {% set group = plural_xlabel %}"
-  caption_templates: randomize_1
+  caption_templates: captions.randomize_1
   type: "binary"
 - id: 2
   regex: "What is the (?P<yvalue>.*) (?P<preposition>of|in) (?P<xvalue>.*)\\s?\\?$"
