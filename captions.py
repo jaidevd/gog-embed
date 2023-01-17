@@ -334,10 +334,10 @@ def randomize_8(answer):
     yays = [
         "The sum of the {{ X }} and {{ Y }} is greater than the {{ Z }} in every {{ group }}.",
         "The sum of the {{ X }} and {{ Y }} is always greater than the {{ Z }}.",
-        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is greater than the {{ Z }}."
+        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is greater than the {{ Z }}.",
         "The sum of the {{ X }} and {{ Y }} is higher than the {{ Z }} in every {{ group }}.",
         "The sum of the {{ X }} and {{ Y }} is always higher than the {{ Z }}.",
-        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is higher than the {{ Z }}."
+        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is higher than the {{ Z }}.",
         "The sum of the {{ X }} and {{ Y }} is more than the {{ Z }} in every {{ group }}.",
         "The sum of the {{ X }} and {{ Y }} is always more than the {{ Z }}.",
         "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is more than the {{ Z }}.",

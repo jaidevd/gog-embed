@@ -6,6 +6,7 @@ from pydoc import locate
 from tornado.template import Template
 import yaml
 import pandas as pd
+from languagetool import fix
 
 op = os.path
 with open("qa_templates.yaml", "r") as fin:
@@ -53,6 +54,22 @@ def process_qa(question_id, regex, answer, matches):
     return {"question_id": question_id, "template_id": regex, "caption": out}
 
 
+def match_and_generate(qs, answer, pattern, header, tmpl_opts):
+    matches = re.search(pattern, qs).groupdict()
+    tmpl = header
+    if isinstance(tmpl_opts, list):
+        tmpl += random.choice(tmpl_opts)
+    elif isinstance(tmpl_opts, str):
+        func = locate(tmpl_opts)
+        if callable(func):
+            tmpl += func(answer)
+        else:
+            tmpl += tmpl_opts
+    else:
+        raise ValueError(f"Invalid caption template {tmpl_opts}.")
+    return Template(tmpl).generate(answer=answer, **matches).decode()
+
+
 class PlotQA(object):
     def __init__(self, root):
         self.root = root
@@ -68,11 +85,47 @@ class PlotQA(object):
 
 if __name__ == "__main__":
     from joblib import Parallel, delayed
-    import json
 
-    with open("data/matches_merged_2.json", "r") as fin:
-        df = json.load(fin)
+    tmpl = tmpl_cfg.loc[8]
+    header = tmpl["template_header"]
+    tmpl_opts = tmpl["caption_templates"]
+    pattern = tmpl["regex"]
 
-    res = Parallel(n_jobs=-1, verbose=2)(delayed(process_qa)(**row) for row in df)
-    with open("data/captions_2.json", "w") as fout:
-        json.dump(res, fout, indent=2)
+    def _proc(question_string, answer, question_id, **kwargs):
+        caption = match_and_generate(
+            question_string, answer, pattern, header, tmpl_opts
+        )
+        return {
+            "question_id": question_id,
+            "caption": fix(caption),
+        }
+
+    for i, df in enumerate(
+        pd.read_json("data/qa_captions.json", lines=True, chunksize=1_000_000)
+    ):
+        eights = df[df["template_id"] == 8]
+        if len(eights) > 0:
+            captions = Parallel(n_jobs=-1, verbose=1)(
+                delayed(_proc)(**row) for _, row in eights.iterrows()
+            )
+            captions = (
+                pd.DataFrame(captions)
+                .set_index("question_id", verify_integrity=True)
+                .squeeze("columns")
+            )
+            df.set_index("question_id", verify_integrity=True, inplace=True)
+            df.loc[captions.index, "caption"] = captions
+            df.reset_index().to_json(
+                f"data/qa_captions_8fix_{i}.json", lines=True, orient="records"
+            )
+        else:
+            df.to_json(f"data/qa_captions_8fix_{i}.json", lines=True, orient="records")
+
+    # import json
+
+    # with open("data/matches_merged_2.json", "r") as fin:
+    #     df = json.load(fin)
+
+    # res = Parallel(n_jobs=-1, verbose=2)(delayed(process_qa)(**row) for row in df)
+    # with open("data/captions_2.json", "w") as fout:
+    #     json.dump(res, fout, indent=2)
