@@ -55,7 +55,11 @@ def process_qa(question_id, regex, answer, matches):
 
 
 def match_and_generate(qs, answer, pattern, header, tmpl_opts):
-    matches = re.search(pattern, qs).groupdict()
+    matches = re.search(pattern, qs)
+    if matches:
+        matches = matches.groupdict()
+    else:
+        return ''
     tmpl = header
     if isinstance(tmpl_opts, list):
         tmpl += random.choice(tmpl_opts)
@@ -86,7 +90,7 @@ class PlotQA(object):
 if __name__ == "__main__":
     from joblib import Parallel, delayed
 
-    tmpl = tmpl_cfg.loc[8]
+    tmpl = tmpl_cfg.loc[1]
     header = tmpl["template_header"]
     tmpl_opts = tmpl["caption_templates"]
     pattern = tmpl["regex"]
@@ -103,7 +107,7 @@ if __name__ == "__main__":
     for i, df in enumerate(
         pd.read_json("data/qa_captions.json", lines=True, chunksize=1_000_000)
     ):
-        eights = df[df["template_id"] == 8]
+        eights = df[df["template_id"] == 1]
         if len(eights) > 0:
             captions = Parallel(n_jobs=-1, verbose=1)(
                 delayed(_proc)(**row) for _, row in eights.iterrows()
@@ -116,10 +120,10 @@ if __name__ == "__main__":
             df.set_index("question_id", verify_integrity=True, inplace=True)
             df.loc[captions.index, "caption"] = captions
             df.reset_index().to_json(
-                f"data/qa_captions_8fix_{i}.json", lines=True, orient="records"
+                f"data/qa_captions_1fix_{i}.json", lines=True, orient="records"
             )
         else:
-            df.to_json(f"data/qa_captions_8fix_{i}.json", lines=True, orient="records")
+            df.to_json(f"data/qa_captions_1fix_{i}.json", lines=True, orient="records")
 
     # import json
 
