@@ -9,7 +9,7 @@ from tqdm import tqdm
 URL = "http://localhost:8081/v2/check"
 
 
-def process(question_id, caption, template_id=None):
+def process(question_id, caption, template_id=None, **kwargs):
     resp = get(URL, params={"language": "en-US", "text": caption})
     if resp.ok:
         return {"question_id": question_id, "matches": resp.json()["matches"]}
@@ -43,6 +43,39 @@ def fix_tokens(s):
     return s
 
 
+def space_before_bracket(s):
+    return re.sub(r'(?P<prefix>\S)\(', r'\g<prefix> (', s)
+
+
+def missing_determiner(s, repl, offset, length):
+    prefix = s[:offset]
+    suffix = s[(offset + length):]
+    return prefix + repl + suffix
+
+
+def determiner_suffix_nnp(s):
+    """Fix proper nouns when determiners appear at the end, like:
+
+    United States of America, The
+    Czech Republic, The
+    """
+    return re.sub(r'(?P<nnp>.*), The', r'The \g<nnp>', s)
+
+
+def unpaired_symbol(s, sym):
+    if s.count(sym) % 2 == 0:
+        msg = f'Symbol {sym} is not unpaired in the sentence:\n' + s
+        raise ValueError(msg)
+    raise NotImplementedError
+
+
+def trim_leading_symbols(s, sym='"'):
+    if s.count(sym) % 2 == 0:
+        msg = f'Symbol {sym} is not unpaired in the sentence:\n' + s
+        raise ValueError(msg)
+    return re.sub(f'^\\s*{sym}\\s*', '', s)
+
+
 def fix(s):
     s = fix_spaces(s)
     s = fix_tokens(s)
@@ -71,14 +104,18 @@ def check():
 
 
 if __name__ == "__main__":
-    with open("data/captions_2.json", "r") as fin:
-        captions = json.load(fin)
+    import pandas as pd
 
-    def _proc(x):
-        x.update({'caption': fix(x['caption'])})
-        return x
+    with open("data/strat_sample.json", "r") as fin:
+        data = json.load(fin)
 
-    res = Parallel(n_jobs=-1, verbose=2)(delayed(_proc)(c) for c in captions)
+    res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**r) for r in data)
 
-    with open("data/captions_2.json", "w") as fin:
-        json.dump(res, fin, indent=2)
+    df = pd.DataFrame.from_records(data).set_index("question_id", verify_integrity=True)
+    res = (
+        pd.DataFrame.from_records(res)
+        .set_index("question_id", verify_integrity=True)
+        .squeeze("columns")
+    )
+    df["matches"] = res
+    df.reset_index().to_json('data/strat_sample.json', orient='records', indent=2)
