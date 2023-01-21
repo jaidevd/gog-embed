@@ -300,11 +300,11 @@
   caption_templates: captions.randomize_39
   type: "retrieval"
 - id: 40
-  regex: "Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (inclusive/exclusive) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
+  regex: "Do a majority of the (?P<plural_xlabel>.*) between (?P<xvalue1>.*) and (?P<xvalue2>.*) (?P<adj>\\(inclusive\\)|\\(exclusive\\)) have (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
     # Counterexamples
     # Do a majority of the years between 2005 and 2002 (inclusive) have enrollments in private institutions greater than 5.8 % ?
   template_header: ""
-  caption_templates: ""
+  caption_templates: captions.randomize_40
   type: "binary"
 - id: 41
   regex: "In how many (?P<plural_xlabel>.*), is the (?P<ylabel>.*) greater than (?P<integer>.*) (?P<unit>.*)\\s?\\?$"
@@ -338,3 +338,8 @@
                     {% set Y = f'{ylabel2} {preposition2} {legendlabel2}' %}"
   caption_templates: captions.randomize_44
   type: "retrieval"
+- id: 45
+  regex: "Is the difference between the (?P<metric1>.*) in (?P<group1>.*) and (?P<group2>.*) greater than the difference between the (?P<metric2>.*) in (?P<group3>.*) and (?P<group4>.*)\\s?\\?$"
+  template_header: ""
+  caption_templates: captions.randomize_45
+  type: "binary"

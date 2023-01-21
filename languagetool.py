@@ -48,6 +48,9 @@ def space_before_bracket(s):
 
 
 def missing_determiner(s, repl, offset, length):
+    """
+    Gambia, The
+    """
     prefix = s[:offset]
     suffix = s[(offset + length):]
     return prefix + repl + suffix
@@ -63,14 +66,16 @@ def determiner_suffix_nnp(s):
 
 
 def unpaired_symbol(s, sym):
-    if s.count(sym) % 2 == 0:
+    count = s.count(sym)
+    if count > 0 and s.count(sym) % 2 == 0:
         msg = f'Symbol {sym} is not unpaired in the sentence:\n' + s
         raise ValueError(msg)
     raise NotImplementedError
 
 
 def trim_leading_symbols(s, sym='"'):
-    if s.count(sym) % 2 == 0:
+    count = s.count(sym)
+    if count > 0 and s.count(sym) % 2 == 0:
         msg = f'Symbol {sym} is not unpaired in the sentence:\n' + s
         raise ValueError(msg)
     return re.sub(f'^\\s*{sym}\\s*', '', s)
