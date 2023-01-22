@@ -4,6 +4,7 @@ import gc
 import re
 from joblib import Parallel, delayed
 from tqdm import tqdm
+from spacy.tokens import Doc
 
 
 URL = "http://localhost:8081/v2/check"
@@ -85,6 +86,86 @@ def fix(s):
     s = fix_spaces(s)
     s = fix_tokens(s)
     return s
+
+
+def repeated_words(s):
+    """
+    in in 2008?
+    in in 2006 to ...
+    in in Ecuador
+    in in North America
+    Messed Up:
+        - Spain the -> Spain in the
+        - Benin
+        - Bahrain the
+        - Liechtenstein
+        - origin
+    """
+
+
+def fix_is_subject(s):
+    """
+    ('The verb form ‘is’ does not seem to match the subject ‘exports’.', 89),
+    ('The verb form ‘is’ does not seem to match the subject ‘savings’.', 19),
+    ('The verb form ‘is’ does not seem to match the subject ‘withdrawals’.', 17),
+    ('The verb form ‘is’ does not seem to match the subject ‘remittances’.', 9),
+    ('The verb form ‘is’ does not seem to match the subject ‘stocks’.', 5),
+    ('The verb form ‘differ’ does not seem to match the subject ‘rent’.', 4),
+    ('The verb form ‘does’ does not seem to match the subject ‘withdrawals’.', 2),
+    ('The verb form ‘does’ does not seem to match the subject ‘savings’.', 2),
+    ('The verb form ‘does’ does not seem to match the subject ‘payments’.', 2),
+    ('The verb form ‘differ’ does not seem to match the subject ‘education’.', 2),
+    ('The verb form ‘differ’ does not seem to match the subject ‘service’.', 2),
+    ('The verb form ‘differ’ does not seem to match the subject ‘rate’.', 2),
+    ('The verb form ‘differ’ does not seem to match the subject ‘ratio’.', 2),
+    ('The verb form ‘is’ does not seem to match the subject ‘payments’.', 1),
+    ('The verb form ‘does’ does not seem to match the subject ‘imports’.', 1),
+    ('The verb form ‘does’ does not seem to match the subject ‘remittances’.', 1),
+    ('The verb form ‘increases’ does not seem to match the subject ‘savings’.',
+     1),
+    ('The verb form ‘does’ does not seem to match the subject ‘flows’.', 1),
+    ('The verb form ‘does’ does not seem to match the subject ‘stocks’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘population’.',
+     1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘density’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘students’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘production’.',
+     1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘index’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘balance’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘force’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘student’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘birth’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘yield’.', 1),
+    ('The verb form ‘differ’ does not seem to match the subject ‘debt’.', 1),
+    ('The verb form ‘is’ does not seem to match the subject ‘flows’.', 1),
+    ('The verb form ‘is’ does not seem to match the subject ‘subscribers’.', 1)]
+    """
+
+
+def fix_one_plural(doc, nlp):
+    if not isinstance(doc, Doc):
+        doc = nlp(doc)
+    orgdoc = doc.copy()
+    edits = []
+    words = [t.text for t in orgdoc]
+    spaces = [bool(t.whitespace_) for t in doc]
+    # Find noun chunks
+
+    for chunk in orgdoc.noun_chunks:
+        if len(chunk) != 2:
+            continue
+        (cd, noun), tags = zip(*[(t, t.tag_) for t in chunk])
+        # If it is of the form "1 plural_form",
+        if tags == ('CD', 'NNS'):
+            cd, noun = chunk
+            if cd.text == '1':
+                singular_noun = noun.lemma_
+                edits.append((noun.text, singular_noun))
+                new_chunk = cd.text, singular_noun
+                words[chunk.start:chunk.end] = new_chunk
+                doc = Doc(orgdoc.vocab, words=words, spaces=spaces)
+    return doc, edits
 
 
 def check():
