@@ -8,6 +8,16 @@ from spacy.tokens import Doc
 
 
 URL = "http://localhost:8081/v2/check"
+AUX_VERB_PLURALIZE = {
+    "was": "were",
+    "is": "are",
+    "does": "do",
+    "has": "have",
+    "differs": "differ"
+}
+AUX_VERB_SINGULARIZE = {v: k for k, v in AUX_VERB_PLURALIZE.items()}
+is_noun_singular = lambda x: x.tag_ in ('NN', 'NNP')  # NOQA: E731
+is_noun_plural = lambda x: x.tag_ in ('NNS', 'NNPS')  # NOQA: E731
 
 
 def process(question_id, caption, template_id=None, **kwargs):
@@ -18,6 +28,72 @@ def process(question_id, caption, template_id=None, **kwargs):
 
 
 # Fixes
+
+
+def find_root_nsubj(doc):
+    root = None
+    for token in doc:
+        if token.dep_ == 'ROOT':
+            root = token
+            break
+    if root is None:
+        raise ValueError('Cannot find root!')
+    aux_verb = None
+    for child in root.children:
+        if child.dep_ == 'aux':
+            aux_verb = child
+    nsubj = None
+    for noun in root.children:
+        if noun.dep_ == 'nsubj':
+            nsubj = noun
+            if nsubj.pos_ == 'ADJ':
+                nsubj = nsubj.conjuncts[0]
+            break
+    if (aux_verb is not None) and (nsubj in aux_verb.children):
+        root = aux_verb
+    return root, nsubj
+
+
+def has_agreement(verb, subject):
+    if (subject is None) or (subject.tag_ == 'CD'):
+        return True, verb
+
+    if verb.tag_ == 'VBP':
+        return is_noun_plural(subject), verb
+    if verb.tag_ == 'VBZ':
+        return is_noun_singular(subject), verb
+    if verb.tag_ == 'VBD':
+        is_singular = verb.morph.get('Number') == ['Sing']
+        if is_singular:
+            return is_noun_singular(subject), verb
+        return is_noun_plural(subject), verb
+    if verb.tag_ == 'VB':
+        # Find the auxiliary child and that becomes the new verb
+        for child in verb.children:
+            if child.dep_ == 'aux':
+                break
+        return has_agreement(child, subject)
+    raise ValueError(f'Tag for verb {verb} not valid.')
+
+
+def fix_verb_subject_agreement(doc):
+    verb, subject = find_root_nsubj(doc)
+    agrees, verb = has_agreement(verb, subject)
+    verbix = verb.i
+    if agrees:
+        return doc
+    if subject.tag_ in ('NN', 'NNP'):  # subject is singular
+        verb = AUX_VERB_SINGULARIZE[verb.text]
+    elif subject.tag_ in ('NNS', 'NNPS'):  # subject is plural
+        verb = AUX_VERB_PLURALIZE.get(verb.text, verb.lemma_)
+    elif subject.tag_ in ('NFP',):
+        return doc
+    else:
+        raise ValueError(f'Tag {subject.tag_} of noun {subject.text} not recognized.')
+    words = [t.text for t in doc]
+    words[verbix] = verb
+    spaces = [bool(t.whitespace_) for t in doc]
+    return Doc(doc.vocab, words, spaces)
 
 
 def fix_spaces(s):
