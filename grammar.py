@@ -1,10 +1,12 @@
 import json
+from collections import Counter
 from requests import get
 import gc
 import re
 from joblib import Parallel, delayed
 from tqdm import tqdm
 from spacy.tokens import Doc
+import pandas as pd
 
 
 URL = "http://localhost:8081/v2/check"
@@ -13,11 +15,11 @@ AUX_VERB_PLURALIZE = {
     "is": "are",
     "does": "do",
     "has": "have",
-    "differs": "differ"
+    "differs": "differ",
 }
 AUX_VERB_SINGULARIZE = {v: k for k, v in AUX_VERB_PLURALIZE.items()}
-is_noun_singular = lambda x: x.tag_ in ('NN', 'NNP')  # NOQA: E731
-is_noun_plural = lambda x: x.tag_ in ('NNS', 'NNPS')  # NOQA: E731
+is_noun_singular = lambda x: x.tag_ in ("NN", "NNP")  # NOQA: E731
+is_noun_plural = lambda x: x.tag_ in ("NNS", "NNPS")  # NOQA: E731
 
 
 def process(question_id, caption, template_id=None, **kwargs):
@@ -27,26 +29,52 @@ def process(question_id, caption, template_id=None, **kwargs):
     raise ValueError(f"LT Request failed with status {resp.status_code}")
 
 
+def has_match(matches, key, value):
+    for match in matches:
+        if value.lower() in match[key].lower():
+            return True
+    return False
+
+
+def err_counter(messages):
+    msgs = []
+    for m in messages:
+        for match in m['matches']:
+            msgs.append(match['message'])
+    return Counter(msgs)
+
+
+def filter_lt_messages(messages, reverse=False, **kwargs):
+    if all([k is None for k in kwargs.values()]):
+        raise ValueError('At least one kwarg must be ~None.')
+    for k, v in kwargs.items():
+        if reverse:
+            messages = filter(lambda x: not has_match(x['matches'], k, v), messages)
+        else:
+            messages = filter(lambda x: has_match(x['matches'], k, v), messages)
+    return [m for m in messages if len(m['matches']) > 0]
+
+
 # Fixes
 
 
 def find_root_nsubj(doc):
     root = None
     for token in doc:
-        if token.dep_ == 'ROOT':
+        if token.dep_ == "ROOT":
             root = token
             break
     if root is None:
-        raise ValueError('Cannot find root!')
+        raise ValueError("Cannot find root!")
     aux_verb = None
     for child in root.children:
-        if child.dep_ == 'aux':
+        if child.dep_ == "aux":
             aux_verb = child
     nsubj = None
     for noun in root.children:
-        if noun.dep_ == 'nsubj':
+        if noun.dep_ == "nsubj":
             nsubj = noun
-            if nsubj.pos_ == 'ADJ':
+            if nsubj.pos_ == "ADJ":
                 nsubj = nsubj.conjuncts[0]
             break
     if (aux_verb is not None) and (nsubj in aux_verb.children):
@@ -55,25 +83,25 @@ def find_root_nsubj(doc):
 
 
 def has_agreement(verb, subject):
-    if (subject is None) or (subject.tag_ == 'CD'):
+    if (subject is None) or (subject.tag_ == "CD"):
         return True, verb
 
-    if verb.tag_ == 'VBP':
+    if verb.tag_ == "VBP":
         return is_noun_plural(subject), verb
-    if verb.tag_ == 'VBZ':
+    if verb.tag_ == "VBZ":
         return is_noun_singular(subject), verb
-    if verb.tag_ == 'VBD':
-        is_singular = verb.morph.get('Number') == ['Sing']
+    if verb.tag_ == "VBD":
+        is_singular = verb.morph.get("Number") == ["Sing"]
         if is_singular:
             return is_noun_singular(subject), verb
         return is_noun_plural(subject), verb
-    if verb.tag_ == 'VB':
+    if verb.tag_ == "VB":
         # Find the auxiliary child and that becomes the new verb
         for child in verb.children:
-            if child.dep_ == 'aux':
+            if child.dep_ == "aux":
                 break
         return has_agreement(child, subject)
-    raise ValueError(f'Tag for verb {verb} not valid.')
+    raise ValueError(f"Tag for verb {verb} not valid.")
 
 
 def fix_verb_subject_agreement(doc):
@@ -82,18 +110,18 @@ def fix_verb_subject_agreement(doc):
     verbix = verb.i
     if agrees:
         return doc
-    if subject.tag_ in ('NN', 'NNP'):  # subject is singular
+    if subject.tag_ in ("NN", "NNP"):  # subject is singular
         verb = AUX_VERB_SINGULARIZE[verb.text]
-    elif subject.tag_ in ('NNS', 'NNPS'):  # subject is plural
+    elif subject.tag_ in ("NNS", "NNPS"):  # subject is plural
         verb = AUX_VERB_PLURALIZE.get(verb.text, verb.lemma_)
-    elif subject.tag_ in ('NFP',):
+    elif subject.tag_ in ("NFP",):
         return doc
     else:
-        raise ValueError(f'Tag {subject.tag_} of noun {subject.text} not recognized.')
+        raise ValueError(f"Tag {subject.tag_} of noun {subject.text} not recognized.")
     words = [t.text for t in doc]
     words[verbix] = verb
     spaces = [bool(t.whitespace_) for t in doc]
-    return Doc(doc.vocab, words, spaces)
+    return Doc(doc.vocab, words, spaces).text
 
 
 def fix_spaces(s):
@@ -121,7 +149,7 @@ def fix_tokens(s):
 
 
 def space_before_bracket(s):
-    return re.sub(r'(?P<prefix>\S)\(', r'\g<prefix> (', s)
+    return re.sub(r"(?P<prefix>\S)\(", r"\g<prefix> (", s)
 
 
 def missing_determiner(s, repl, offset, length):
@@ -139,13 +167,13 @@ def determiner_suffix_nnp(s):
     United States of America, The
     Czech Republic, The
     """
-    return re.sub(r'(?P<nnp>.*), The', r'The \g<nnp>', s)
+    return re.sub(r"(?P<nnp>.*), The", r"The \g<nnp>", s)
 
 
 def unpaired_symbol(s, sym):
     count = s.count(sym)
     if count > 0 and s.count(sym) % 2 == 0:
-        msg = f'Symbol {sym} is not unpaired in the sentence:\n' + s
+        msg = f"Symbol {sym} is not unpaired in the sentence:\n" + s
         raise ValueError(msg)
     raise NotImplementedError
 
@@ -153,9 +181,9 @@ def unpaired_symbol(s, sym):
 def trim_leading_symbols(s, sym='"'):
     count = s.count(sym)
     if count > 0 and s.count(sym) % 2 == 0:
-        msg = f'Symbol {sym} is not unpaired in the sentence:\n' + s
+        msg = f"Symbol {sym} is not unpaired in the sentence:\n" + s
         raise ValueError(msg)
-    return re.sub(f'^\\s*{sym}\\s*', '', s)
+    return re.sub(f"^\\s*{sym}\\s*", "", s)
 
 
 def fix(s):
@@ -219,6 +247,20 @@ def fix_is_subject(s):
     """
 
 
+def fix_determiner_superlative(doc):
+    """                      the
+    The highest population in   largest city across years is 200.
+                              ^ -------
+                              (superlative)
+    """
+    # If an adjective is superlative:
+    # If an adjective has a determiner, leave it alone.
+    # It it's conjunct noun has a determiner, leave it alone.
+    # If it has no determiner, but it's ancestor noun (to which the adj is amod) has one,
+    # leave it alone.
+    # otherwise add a determiner if it is supelative.
+
+
 def fix_one_plural(doc, nlp):
     if not isinstance(doc, Doc):
         doc = nlp(doc)
@@ -233,13 +275,13 @@ def fix_one_plural(doc, nlp):
             continue
         (cd, noun), tags = zip(*[(t, t.tag_) for t in chunk])
         # If it is of the form "1 plural_form",
-        if tags == ('CD', 'NNS'):
+        if tags == ("CD", "NNS"):
             cd, noun = chunk
-            if cd.text == '1':
+            if cd.text == "1":
                 singular_noun = noun.lemma_
                 edits.append((noun.text, singular_noun))
                 new_chunk = cd.text, singular_noun
-                words[chunk.start:chunk.end] = new_chunk
+                words[chunk.start: chunk.end] = new_chunk
                 doc = Doc(orgdoc.vocab, words=words, spaces=spaces)
     return doc, edits
 
@@ -265,19 +307,31 @@ def check():
         json.dump(res, fout, indent=2)
 
 
+def draw_sample(path='data/qa_captions.json', size=10_000):
+    samples = []
+    for i, df in tqdm(
+        enumerate(
+            pd.read_json("data/qa_captions.json", lines=True, chunksize=1_000_000)
+        )
+    ):
+        xdf = df.sample(10_000)
+        res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**r) for _, r in xdf.iterrows())
+        res = [c for c in res if len(c['matches']) > 0]
+        samples.extend(res)
+    return samples
+
+
 if __name__ == "__main__":
-    import pandas as pd
-
-    with open("data/strat_sample.json", "r") as fin:
-        data = json.load(fin)
-
-    res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**r) for r in data)
-
-    df = pd.DataFrame.from_records(data).set_index("question_id", verify_integrity=True)
-    res = (
-        pd.DataFrame.from_records(res)
-        .set_index("question_id", verify_integrity=True)
-        .squeeze("columns")
-    )
-    df["matches"] = res
-    df.reset_index().to_json('data/strat_sample.json', orient='records', indent=2)
+    samples = draw_sample()
+    typos = filter_lt_messages(samples, message='Possible spelling mistake')
+    typos = filter_lt_messages(samples, reverse=True, message='British English')
+    T = []
+    for t in typos:
+        for match in t['matches']:
+            sentence = match['sentence']
+            if match['message'].startswith('Possible spelling mistake'):
+                start = match['offset']
+                end = start + match['length']
+                s = sentence[start:end]
+                T.append(s)
+    print(set(T))
