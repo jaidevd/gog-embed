@@ -90,3 +90,24 @@ s/\bwfp\b/WFP/g
 s/\bunta\b/UNTA/g
 s/\blitre\b/liter/g
 s/\bunaids\b/UNAIDS/g
+# This don't work
+s/Cote d\'Ivoire/Côte d\'Ivoire/g 
+# THE_SUPERLATIVE
+s/\bpoorest\b/the poorest/g
+s/\blargest\b/the largest/g
+s/\bthe the poorest\b/the poorest/g
+s/\bthe the largest\b/the largest/g
+# One word
+s/\bmoney lenders\b/moneylenders/g
+s/\btax payers\b/taxpayers/g
+# whitespace parenthesis
+s/mm )/mm)/g
+# repeat words
+s/"\bThe the\b/"The/g
+s/\btotal total\b/total/g
+s/\bthe the\b/the/g
+s/\baverage Average\b/average/g
+s/\bexpenses Expenses\b/expenses/g
+s/\bproduction Production\b/production/g
+s/\brate Rate\b/rate/g
+s/\bsavings Savings\b/savings/g

@@ -39,20 +39,20 @@ def has_match(matches, key, value):
 def err_counter(messages):
     msgs = []
     for m in messages:
-        for match in m['matches']:
-            msgs.append(match['message'])
+        for match in m["matches"]:
+            msgs.append(match["message"])
     return Counter(msgs)
 
 
 def filter_lt_messages(messages, reverse=False, **kwargs):
     if all([k is None for k in kwargs.values()]):
-        raise ValueError('At least one kwarg must be ~None.')
+        raise ValueError("At least one kwarg must be ~None.")
     for k, v in kwargs.items():
         if reverse:
-            messages = filter(lambda x: not has_match(x['matches'], k, v), messages)
+            messages = filter(lambda x: not has_match(x["matches"], k, v), messages)
         else:
-            messages = filter(lambda x: has_match(x['matches'], k, v), messages)
-    return [m for m in messages if len(m['matches']) > 0]
+            messages = filter(lambda x: has_match(x["matches"], k, v), messages)
+    return [m for m in messages if len(m["matches"]) > 0]
 
 
 # Fixes
@@ -111,7 +111,7 @@ def fix_verb_subject_agreement(doc):
     if agrees:
         return doc
     if subject.tag_ in ("NN", "NNP"):  # subject is singular
-        verb = AUX_VERB_SINGULARIZE[verb.text]
+        verb = AUX_VERB_SINGULARIZE.get(verb.text, verb.text)
     elif subject.tag_ in ("NNS", "NNPS"):  # subject is plural
         verb = AUX_VERB_PLURALIZE.get(verb.text, verb.lemma_)
     elif subject.tag_ in ("NFP",):
@@ -157,7 +157,7 @@ def missing_determiner(s, repl, offset, length):
     Gambia, The
     """
     prefix = s[:offset]
-    suffix = s[(offset + length):]
+    suffix = s[(offset + length) :]
     return prefix + repl + suffix
 
 
@@ -248,7 +248,7 @@ def fix_is_subject(s):
 
 
 def fix_determiner_superlative(doc):
-    """                      the
+    """the
     The highest population in   largest city across years is 200.
                               ^ -------
                               (superlative)
@@ -281,7 +281,7 @@ def fix_one_plural(doc, nlp):
                 singular_noun = noun.lemma_
                 edits.append((noun.text, singular_noun))
                 new_chunk = cd.text, singular_noun
-                words[chunk.start: chunk.end] = new_chunk
+                words[chunk.start : chunk.end] = new_chunk
                 doc = Doc(orgdoc.vocab, words=words, spaces=spaces)
     return doc, edits
 
@@ -294,7 +294,7 @@ def check():
     remainder = len(captions) % unit
     for i in tqdm(range(5, n_slices)):
         gc.collect()
-        part = captions[(i * unit): (i + 1) * unit]
+        part = captions[(i * unit) : (i + 1) * unit]
         res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**k) for k in part)
         res = [k for k in res if k["matches"]]
         with open(f"data/lt_results_{i}.json", "w") as fout:
@@ -307,7 +307,7 @@ def check():
         json.dump(res, fout, indent=2)
 
 
-def draw_sample(path='data/qa_captions.json', size=10_000):
+def draw_sample(path="data/qa_captions.json", size=10_000):
     samples = []
     for i, df in tqdm(
         enumerate(
@@ -315,23 +315,23 @@ def draw_sample(path='data/qa_captions.json', size=10_000):
         )
     ):
         xdf = df.sample(10_000)
-        res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**r) for _, r in xdf.iterrows())
-        res = [c for c in res if len(c['matches']) > 0]
+        res = Parallel(n_jobs=-1, verbose=2)(
+            delayed(process)(**r) for _, r in xdf.iterrows()
+        )
+        res = [c for c in res if len(c["matches"]) > 0]
         samples.extend(res)
     return samples
 
 
 if __name__ == "__main__":
-    samples = draw_sample()
-    typos = filter_lt_messages(samples, message='Possible spelling mistake')
-    typos = filter_lt_messages(samples, reverse=True, message='British English')
-    T = []
-    for t in typos:
-        for match in t['matches']:
-            sentence = match['sentence']
-            if match['message'].startswith('Possible spelling mistake'):
-                start = match['offset']
-                end = start + match['length']
-                s = sentence[start:end]
-                T.append(s)
-    print(set(T))
+    for i, df in tqdm(
+        enumerate(
+            pd.read_json("data/qa_captions.json", lines=True, chunksize=1_000_000)
+        )
+    ):
+        errs = Parallel(n_jobs=10, verbose=2)(
+            delayed(process)(**row) for _, row in df.iterrows()
+        )
+        errs = [e for e in errs if len(e['matches']) > 0]
+        with open(f"data/grammar_{i}.json", "w") as fout:
+            json.dump(errs, fout, indent=2)
