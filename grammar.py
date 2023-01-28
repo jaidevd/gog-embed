@@ -8,7 +8,6 @@ from tqdm import tqdm
 from spacy.tokens import Doc
 import pandas as pd
 
-
 URL = "http://localhost:8081/v2/check"
 AUX_VERB_PLURALIZE = {
     "was": "were",
@@ -66,6 +65,14 @@ def find_root_nsubj(doc):
             break
     if root is None:
         raise ValueError("Cannot find root!")
+    if len(list(root.ancestors)) > 0:
+        candidates = []
+        for token in doc:
+            if len(list(token.ancestors)) == 0:
+                candidates.append(token)
+        if len(candidates) > 1:
+            raise ValueError('Found more than one token that has no ancestors.')
+        root = candidates[0]
     aux_verb = None
     for child in root.children:
         if child.dep_ == "aux":
@@ -321,6 +328,18 @@ def draw_sample(path="data/qa_captions.json", size=10_000):
         res = [c for c in res if len(c["matches"]) > 0]
         samples.extend(res)
     return samples
+
+
+def get_typos(data, pat='possible spelling mistake'):
+    T = []
+    for k in data:
+        for match in k['matches']:
+            sent = match['sentence']
+            if pat.lower() in match['message'].lower():
+                start = match['offset']
+                end = start + match['length']
+                T.append(sent[start:end])
+    return set(T)
 
 
 if __name__ == "__main__":

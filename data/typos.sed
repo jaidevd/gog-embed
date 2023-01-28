@@ -111,3 +111,22 @@ s/\bexpenses Expenses\b/expenses/g
 s/\bproduction Production\b/production/g
 s/\brate Rate\b/rate/g
 s/\bsavings Savings\b/savings/g
+s/\bbranche\b/branches/gI
+# Hyphenated
+s/\bNon renewable\b/Non-renewable/g
+s/\bnon concessional\b/non-concessional/g
+s/\bnon residents\b/non-residents/g
+s/\bself employed\b/self-employed/g
+s/\bwell developed\b/well-developed/g
+# Apostrophe
+s/\bfemales population\b/female population/g
+s/\bmales population\b/male population/g
+# Determiner
+s/\bIn Isle of Man\b/In the Isle of Man/g
+s/\bIn Turks and Caicos Islands\b/In the Turks and Caicos Islands/g
+s/\bin Isle of Man\b/in the Isle of Man/g
+s/\bin Turks and Caicos Islands\b/in the Turks and Caicos Islands/g
+s/\bof Isle of Man\b/of the Isle of Man/g
+s/\bof Turks and Caicos Islands\b/of the Turks and Caicos Islands/g
+# Misc
+s/\baverage per year\b/average annual/g
