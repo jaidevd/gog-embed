@@ -6,7 +6,7 @@ from pydoc import locate
 from tornado.template import Template
 import yaml
 import pandas as pd
-from languagetool import fix
+from grammar import fix
 
 op = os.path
 with open("qa_templates.yaml", "r") as fin:

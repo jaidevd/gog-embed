@@ -92,6 +92,7 @@ s/\blitre\b/liter/g
 s/\bunaids\b/UNAIDS/g
 # This don't work
 s/Cote d\'Ivoire/Côte d\'Ivoire/g 
+s/Curacao/Curaçao/g
 # THE_SUPERLATIVE
 s/\bpoorest\b/the poorest/g
 s/\blargest\b/the largest/g
@@ -100,6 +101,8 @@ s/\bthe the largest\b/the largest/g
 # One word
 s/\bmoney lenders\b/moneylenders/g
 s/\btax payers\b/taxpayers/g
+s/\bpeace keepers\b/peacekeepers/g
+s/\bwage workers\b/wageworkers/g
 # whitespace parenthesis
 s/mm )/mm)/g
 # repeat words
@@ -130,3 +133,18 @@ s/\bof Isle of Man\b/of the Isle of Man/g
 s/\bof Turks and Caicos Islands\b/of the Turks and Caicos Islands/g
 # Misc
 s/\baverage per year\b/average annual/g
+s/\bTwenty-\ foot Equivalent\b/Twenty-foot\ Equivalent/g
+s/\bNumber of enrolments of both sexes\b/number of enrolments of both sexes/g
+s/\bEgypt, Arab Rep\.\+/Egypt/g
+s/\bYemen, Rep\.\+/Yemen/g
+s/(\ 0 = weak/(0 = weak/g
+# These are the result of bad regexes - still leaving out here for completeness for now:
+s/\bfrom\s\+across\b/from across/g
+s/\bfrom\s\+and\b/from and/g
+s/\bfrom\s\+differ\b/from differ/g
+s/\bfrom\s\+does\b/from does/g
+s/\bfrom\s\+in\b/from in/g
+s/\bfrom\s\+is\b/from is/g
+s/\bfrom\s\+per\b/from per/g
+s/\bfrom\s\+taken\b/from taken/g
+s/\bfrom\s\+was\b/from was/g

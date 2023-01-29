@@ -5,7 +5,7 @@
   caption_templates: captions.randomize_1
   type: "binary"
 - id: 2
-  regex: "What is the (?P<yvalue>.*) (?P<preposition>of|in) (?P<xvalue>.*)\\s?\\?$"
+  regex: "What is the (?P<yvalue>.*?) (?P<preposition>of|in) (?P<xvalue>.*?)\\s?\\?$"
   template_header: ""
   caption_templates:
     - "The {{ yvalue }} {{ preposition }} {{ xvalue }} is {{ answer }}."
