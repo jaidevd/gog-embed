@@ -116,13 +116,13 @@ def fix_verb_subject_agreement(doc):
     agrees, verb = has_agreement(verb, subject)
     verbix = verb.i
     if agrees:
-        return doc
+        return doc.text
     if subject.tag_ in ("NN", "NNP"):  # subject is singular
         verb = AUX_VERB_SINGULARIZE.get(verb.text, verb.text)
     elif subject.tag_ in ("NNS", "NNPS"):  # subject is plural
         verb = AUX_VERB_PLURALIZE.get(verb.text, verb.lemma_)
     elif subject.tag_ in ("NFP",):
-        return doc
+        return doc.text
     else:
         raise ValueError(f"Tag {subject.tag_} of noun {subject.text} not recognized.")
     words = [t.text for t in doc]
@@ -340,6 +340,25 @@ def get_typos(data, pat='possible spelling mistake'):
                 end = start + match['length']
                 T.append(sent[start:end])
     return set(T)
+
+
+def remove_error(data, pat):
+    for err in data:
+        newmatches = []
+        for match in err['matches']:
+            msg = match['message']
+            if pat.lower() not in msg.lower():
+                newmatches.append(match)
+        err['matches'] = newmatches
+    return data
+
+
+def get_repl_values(data):
+    values = []
+    for err in data:
+        for match in err['matches']:
+            values.extend([k['value'] for k in match['replacements']])
+    return set(values)
 
 
 if __name__ == "__main__":

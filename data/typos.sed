@@ -132,6 +132,8 @@ s/\bin Turks and Caicos Islands\b/in the Turks and Caicos Islands/g
 s/\bof Isle of Man\b/of the Isle of Man/g
 s/\bof Turks and Caicos Islands\b/of the Turks and Caicos Islands/g
 # Misc
+s/\bus\$/USD/g
+s/\bUS\$/USD/g
 s/\baverage per year\b/average annual/g
 s/\bTwenty-\ foot Equivalent\b/Twenty-foot\ Equivalent/g
 s/\bNumber of enrolments of both sexes\b/number of enrolments of both sexes/g
@@ -148,3 +150,28 @@ s/\bfrom\s\+is\b/from is/g
 s/\bfrom\s\+per\b/from per/g
 s/\bfrom\s\+taken\b/from taken/g
 s/\bfrom\s\+was\b/from was/g
+# GPES
+s/\bMiddle\ East\b/the\ Middle East/g
+s/\bBahamas\b/the Bahamas/g
+s/\bCayman Islands\b/the Cayman Islands/g
+s/\bCentral African Republic\b/the Central African Republic/g
+s/\bCongo\b/the Congo/g
+s/\bCzech Republic\b/the Czech Republic/g
+s/\bDominican Republic\b/the Dominican Republic/g
+s/\bGambia\b/the Gambia/g
+s/\bNetherlands\b/the Netherlands/g
+s/\bPhilippines\b/the Philippines/g
+s/\bSlovak Republic\b/the Slovak Republic/g
+s/\bSolomon Islands\b/the Solomon Islands/g
+s/\bUS\b/the US/g
+s/\bUnited Arab Emirates\b/the United Arab Emirates/g
+s/\bUnited Kingdom\b/the United Kingdom/g
+s/\bUnited States\b/the United States/g
+s/\bVirgin Islands\b/the Virgin Islands/g
+s/\bWest Bank\b/the West Bank/g
+s/\bCaribbean\b/the Caribbean/g
+s/\bComoros\b/the Comoros/g
+s/\bMaldives\b/the Maldives/g
+s/\bMarshall Islands\b/the Marshall Islands/g
+s/\bChannel Islands\b/the Channel Islands/g
+s/\bthe the\b/the/Ig

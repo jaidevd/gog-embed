@@ -318,10 +318,9 @@
     - "In {{ answer }} {{ groups }}, the {{ metric }} is more than {{ threshold }}."
   type: "retrieval"
 - id: 42
-  regex: "In the year (?P<xvalue>.*), what is the difference between the (?P<ylabel1>.*) (?P<preposition1>of|in) (?P<legendlabel1>.*) and (?P<ylabel2>.*) (?P<preposition2>of|in) (?P<legendlabel2>.*)\\s?\\?$"
-  template_header: "{% set year = xvalue %}
-                    {% set X = f'{ylabel1} {preposition1} {legendlabel1}' %}
-                    {% set Y = f'{ylabel2} {preposition2} {legendlabel2}' %}"
+  regex: "In the year (?P<year>\\d+), what is the difference between the (?P<metric>.*) in (?P<group1>.*) and (?P=metric) in (?P<group2>.*?)\\s?\\?$"
+  template_header: "{% set X = f'{metric} in {group1}' %}
+                    {% set Y = f'{metric} in {group2}' %}"
   caption_templates: captions.randomize_42
   type: "retrieval"
 - id: 43

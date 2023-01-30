@@ -134,7 +134,8 @@ def randomize_39(answer):
 
 @coerce_input(float)
 def randomize_42(answer):
-    """In the year y, what is the difference between the X and the Y?"""
+    """In the year {{ year }}, what is the difference between the {{ metric }} in {{grp1}}
+    and {{ metric }} in {{ grp2 }}?"""
     equals = [
         "The {{ X }} and the {{ Y }} are the same in {{ year }}.",
         "The {{ X }} and the {{ Y }} are equal in {{ year }}.",
