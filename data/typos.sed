@@ -132,6 +132,7 @@ s/\bin Turks and Caicos Islands\b/in the Turks and Caicos Islands/g
 s/\bof Isle of Man\b/of the Isle of Man/g
 s/\bof Turks and Caicos Islands\b/of the Turks and Caicos Islands/g
 # Misc
+s/Vitamin A\b/vitamin A/g
 s/\bus\$/USD/g
 s/\bUS\$/USD/g
 s/\baverage per year\b/average annual/g
@@ -175,3 +176,8 @@ s/\bMaldives\b/the Maldives/g
 s/\bMarshall Islands\b/the Marshall Islands/g
 s/\bChannel Islands\b/the Channel Islands/g
 s/\bthe the\b/the/Ig
+s/Sao Tome/S\u00e3o Tom\u00e9/g
+# ORgs
+s/\bnew zealand/New Zealand/g
+s/international monetary fund\b/International Monetary Fund/g
+s/world bank\b/World Bank\b/g

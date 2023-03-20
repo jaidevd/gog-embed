@@ -7,6 +7,9 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 from spacy.tokens import Doc
 import pandas as pd
+from pymongo import MongoClient, UpdateOne
+from pymongo.errors import InvalidOperation  # NOQA: F401
+import bson  # NOQA: F401
 
 URL = "http://localhost:8081/v2/check"
 AUX_VERB_PLURALIZE = {
@@ -21,8 +24,26 @@ is_noun_singular = lambda x: x.tag_ in ("NN", "NNP")  # NOQA: E731
 is_noun_plural = lambda x: x.tag_ in ("NNS", "NNPS")  # NOQA: E731
 
 
-def process(question_id, caption, template_id=None, **kwargs):
-    resp = get(URL, params={"language": "en-US", "text": caption})
+def process_from_mongo():
+    with MongoClient() as client:
+        db = client.plotqa
+        for batch in tqdm(db.captions.find_raw_batches({}, batch_size=1_000_000)):
+            docs = bson.decode_all(batch)
+            res = Parallel(n_jobs=12, verbose=2)(
+                delayed(process)(d["_id"], d["caption"], d.get("ignore")) for d in docs
+            )
+            write_res = db.captions.bulk_write([
+                UpdateOne({"_id": r['question_id']}, {'$set': {'matches': r['matches']}})
+                for r in res
+            ])
+            print(write_res.bulk_api_result)
+
+
+def process(question_id, caption, ignore=None, template_id=None, **kwargs):
+    params = {"language": "en-US", "text": caption}
+    if ignore is not None:
+        params.update({"disabledRules": ",".join(ignore)})
+    resp = get(URL, params=params)
     if resp.ok:
         return {"question_id": question_id, "matches": resp.json()["matches"]}
     raise ValueError(f"LT Request failed with status {resp.status_code}")
@@ -35,12 +56,19 @@ def has_match(matches, key, value):
     return False
 
 
-def err_counter(messages):
+def err_counter(messages, top=5):
     msgs = []
     for m in messages:
         for match in m["matches"]:
             msgs.append(match["message"])
-    return Counter(msgs)
+    ctr = Counter(msgs)
+    if top:
+        print(ctr.most_common(top))
+    return ctr
+
+
+def get_sentences(errors):
+    return [k["matches"][0]["sentence"] for k in errors]
 
 
 def filter_lt_messages(messages, reverse=False, **kwargs):
@@ -71,7 +99,7 @@ def find_root_nsubj(doc):
             if len(list(token.ancestors)) == 0:
                 candidates.append(token)
         if len(candidates) > 1:
-            raise ValueError('Found more than one token that has no ancestors.')
+            raise ValueError("Found more than one token that has no ancestors.")
         root = candidates[0]
     aux_verb = None
     for child in root.children:
@@ -330,14 +358,14 @@ def draw_sample(path="data/qa_captions.json", size=10_000):
     return samples
 
 
-def get_typos(data, pat='possible spelling mistake'):
+def get_typos(data, pat="possible spelling mistake"):
     T = []
     for k in data:
-        for match in k['matches']:
-            sent = match['sentence']
-            if pat.lower() in match['message'].lower():
-                start = match['offset']
-                end = start + match['length']
+        for match in k["matches"]:
+            sent = match["sentence"]
+            if pat.lower() in match["message"].lower():
+                start = match["offset"]
+                end = start + match["length"]
                 T.append(sent[start:end])
     return set(T)
 
@@ -345,31 +373,21 @@ def get_typos(data, pat='possible spelling mistake'):
 def remove_error(data, pat):
     for err in data:
         newmatches = []
-        for match in err['matches']:
-            msg = match['message']
+        for match in err["matches"]:
+            msg = match["message"]
             if pat.lower() not in msg.lower():
                 newmatches.append(match)
-        err['matches'] = newmatches
+        err["matches"] = newmatches
     return data
 
 
 def get_repl_values(data):
     values = []
     for err in data:
-        for match in err['matches']:
-            values.extend([k['value'] for k in match['replacements']])
+        for match in err["matches"]:
+            values.extend([k["value"] for k in match["replacements"]])
     return set(values)
 
 
 if __name__ == "__main__":
-    for i, df in tqdm(
-        enumerate(
-            pd.read_json("data/qa_captions.json", lines=True, chunksize=1_000_000)
-        )
-    ):
-        errs = Parallel(n_jobs=10, verbose=2)(
-            delayed(process)(**row) for _, row in df.iterrows()
-        )
-        errs = [e for e in errs if len(e['matches']) > 0]
-        with open(f"data/grammar_{i}.json", "w") as fout:
-            json.dump(errs, fout, indent=2)
+    process_from_mongo()

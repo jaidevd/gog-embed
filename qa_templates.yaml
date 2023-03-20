@@ -342,3 +342,8 @@
   template_header: ""
   caption_templates: captions.randomize_45
   type: "binary"
+- id: 46
+  regex: "In the year (?P<year>\\d+), what is the difference between the (?P<metric>.*) (?P<prep>of|in) (?P<group1>.*) and (?P=metric) (?P=prep) (?P<group2>.*)\\s?\\?$"
+  template_header: "{% set X, Y = f'{metric} {prep} {group1}', f'{metric} {prep} {group2}'%}"
+  caption_templates: captions.randomize_42
+  type: "retrieval"
