@@ -24,19 +24,26 @@ is_noun_singular = lambda x: x.tag_ in ("NN", "NNP")  # NOQA: E731
 is_noun_plural = lambda x: x.tag_ in ("NNS", "NNPS")  # NOQA: E731
 
 
-def process_from_mongo():
+def process_from_mongo(query=None):
+    if query is None:
+        query = {}
     with MongoClient() as client:
         db = client.plotqa
-        for batch in tqdm(db.captions.find_raw_batches({}, batch_size=1_000_000)):
+        for batch in tqdm(db.captions.find_raw_batches(query, batch_size=1_000_000)):
             docs = bson.decode_all(batch)
             res = Parallel(n_jobs=12, verbose=2)(
                 delayed(process)(d["_id"], d["caption"], d.get("ignore")) for d in docs
             )
-            write_res = db.captions.bulk_write([
-                UpdateOne({"_id": r['question_id']}, {'$set': {'matches': r['matches']}})
-                for r in res
-            ])
-            print(write_res.bulk_api_result)
+            write_res = db.captions.bulk_write(
+                [
+                    UpdateOne(
+                        {"_id": r["question_id"]},
+                        {"$set": {"matches": r["matches"], "check": True}},
+                    )
+                    for r in res
+                ]
+            )
+            print(write_res.bulk_api_result)  # NOQA: T201
 
 
 def process(question_id, caption, ignore=None, template_id=None, **kwargs):
@@ -46,6 +53,7 @@ def process(question_id, caption, ignore=None, template_id=None, **kwargs):
     resp = get(URL, params=params)
     if resp.ok:
         return {"question_id": question_id, "matches": resp.json()["matches"]}
+    print(resp.text)  # NOQA: T201
     raise ValueError(f"LT Request failed with status {resp.status_code}")
 
 
@@ -63,7 +71,7 @@ def err_counter(messages, top=5):
             msgs.append(match["message"])
     ctr = Counter(msgs)
     if top:
-        print(ctr.most_common(top))
+        print(ctr.most_common(top))  # NOQA: T201
     return ctr
 
 
@@ -359,7 +367,7 @@ def draw_sample(path="data/qa_captions.json", size=10_000):
 
 
 def get_typos(data, pat="possible spelling mistake"):
-    T = []
+    T = []  # NOQA: N806
     for k in data:
         for match in k["matches"]:
             sent = match["sentence"]
