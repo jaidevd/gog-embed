@@ -347,3 +347,23 @@
   template_header: "{% set X, Y = f'{metric} {prep} {group1}', f'{metric} {prep} {group2}'%}"
   caption_templates: captions.randomize_42
   type: "retrieval"
+
+# Validation data
+
+- id: 47
+  regex: "Is the (?P<metric1>.*) strictly greater than the (?P<metric2>.*) over the years\\s?\\?$"
+  template_header: "{% set X, Y = metric1, metric2 %}"
+  caption_templates: captions.randomize_47
+  type: "binary"
+
+- id: 48
+  regex: "Is the (?P<metric1>.*) strictly less than the (?P<metric2>.*) over the years\\s?\\?$"
+  template_header: "{% set X, Y = metric1, metric2 %}"
+  caption_templates: captions.randomize_48
+  type: "binary"
+
+- id: 49
+  regex: "Is it the case that in every (?P<group>.*), the sum of the (?P<metric1>.*) and (?P<metric2>.*) is greater than the (?P<metric3>.*)\\s?\\?$"
+  template_header: "{% set X, Y, Z = metric1, metric2, metric3 %}"
+  caption_templates: captions.randomize_49
+  type: "binary"

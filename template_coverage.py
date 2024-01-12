@@ -20,8 +20,7 @@ if __name__ == "__main__":
         delayed(match_template)(k["question_string"], tmpls) for k in qa
     )
     res = [
-        {"question_id": q["question_id"], "regex": k[0], "matches": k[1]}
-        for q, k in zip(qa, res)
+        {"question_id": q["question_id"], "regex": k[0], "matches": k[1]} for q, k in zip(qa, res)
     ]
     with open("data/matches_1.json", "w") as fout:
         json.dump(res, fout, indent=2)

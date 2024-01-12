@@ -6,17 +6,25 @@ from pydoc import locate
 from tornado.template import Template
 import yaml
 import pandas as pd
-from grammar import fix
+import warnings
+
+# from grammar import fix
+# from pymongo import MongoClient, UpdateMany
+# from tqdm import tqdm
+# import bson
 
 op = os.path
 with open("qa_templates.yaml", "r") as fin:
     tmpl_cfg = pd.DataFrame.from_records(yaml.safe_load(fin), index="id")
 
 
-def match_template(s, tmpls):
-    matches = [re.search(pat, s) for pat in tmpls]
-    matches = [m.groupdict() if m else {} for m in matches]
-    return max(matches, key=len)
+def search_templates(tmpls, _id, question_string, **kwargs):
+    matches = [(tmpl["id"], re.search(tmpl["regex"], question_string)) for tmpl in tmpls]
+    matches = [(t, m.groupdict()) if m else (t, {}) for t, m in matches]
+    match = max(matches, key=lambda x: len(x[1]))
+    if len(match[1]) == 0:
+        warnings.warn(f"Question ID {_id} didn't match any template.")
+    return {"_id": _id, "template_id": match[0], "matches": match[1]}
 
 
 def generate_caption(header, caption, answer, **kwargs):
@@ -59,7 +67,7 @@ def match_and_generate(qs, answer, pattern, header, tmpl_opts):
     if matches:
         matches = matches.groupdict()
     else:
-        return ''
+        return ""
     tmpl = header
     if isinstance(tmpl_opts, list):
         tmpl += random.choice(tmpl_opts)
@@ -88,48 +96,30 @@ class PlotQA(object):
 
 
 if __name__ == "__main__":
+    from pymongo import MongoClient, UpdateOne
     from joblib import Parallel, delayed
+    import bson
 
-    tmpl = tmpl_cfg.loc[1]
-    header = tmpl["template_header"]
-    tmpl_opts = tmpl["caption_templates"]
-    pattern = tmpl["regex"]
-
-    def _proc(question_string, answer, question_id, **kwargs):
-        caption = match_and_generate(
-            question_string, answer, pattern, header, tmpl_opts
-        )
-        return {
-            "question_id": question_id,
-            "caption": fix(caption),
-        }
-
-    for i, df in enumerate(
-        pd.read_json("data/qa_captions.json", lines=True, chunksize=1_000_000)
-    ):
-        eights = df[df["template_id"] == 1]
-        if len(eights) > 0:
-            captions = Parallel(n_jobs=-1, verbose=1)(
-                delayed(_proc)(**row) for _, row in eights.iterrows()
+    tmpls = tmpl_cfg[["regex"]].reset_index().to_dict(orient="records")
+    with MongoClient() as client:
+        db = client.plotqa
+        for batch in db.val_captions.find_raw_batches({'varmatchsize': 0}, batch_size=1_000_000):
+            docs = bson.decode_all(batch)
+            res = Parallel(n_jobs=-1, verbose=2)(
+                delayed(search_templates)(tmpls, **doc) for doc in docs
             )
-            captions = (
-                pd.DataFrame(captions)
-                .set_index("question_id", verify_integrity=True)
-                .squeeze("columns")
-            )
-            df.set_index("question_id", verify_integrity=True, inplace=True)
-            df.loc[captions.index, "caption"] = captions
-            df.reset_index().to_json(
-                f"data/qa_captions_1fix_{i}.json", lines=True, orient="records"
-            )
-        else:
-            df.to_json(f"data/qa_captions_1fix_{i}.json", lines=True, orient="records")
-
-    # import json
-
-    # with open("data/matches_merged_2.json", "r") as fin:
-    #     df = json.load(fin)
-
-    # res = Parallel(n_jobs=-1, verbose=2)(delayed(process_qa)(**row) for row in df)
-    # with open("data/captions_2.json", "w") as fout:
-    #     json.dump(res, fout, indent=2)
+            updates = [
+                UpdateOne(
+                    {"_id": r["_id"]},
+                    {
+                        "$set": {
+                            "variables": r["matches"],
+                            "template_id": r["template_id"],
+                            "varmatchsize": len(r["matches"]),
+                        }
+                    },
+                )
+                for r in res
+            ]
+            wres = db.val_captions.bulk_write(updates)
+            print(wres.bulk_api_result)

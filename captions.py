@@ -1,9 +1,9 @@
 from random import choice
 
 
-def coerce_input(T):
+def coerce_input(_type):
     def converter(func):
-        return lambda x: func(T(x))
+        return lambda x: func(_type(x))
     return converter
 
 
@@ -634,6 +634,57 @@ def randomize_14(answer):
     if answer.lower() == "yes":
         return "The {{ ylabel }} monotonically increases over the {{ plural_xlabel }}."
     return "The {{ ylabel }} does not monotonically increases over the {{ plural_xlabel }}."
+
+
+@binary_check
+def randomize_47(answer):
+    """Is the {{ X }} strictly greater than the {{ Y }} over the years?"""
+    yays = [
+        "The {{ X }} is strictly greater than the {{ Y }} over the years.",
+        "The {{ Y }} is strictly less than the {{ X }} over the years."
+    ]
+    nays = [
+        "The {{ X }} is not strictly greater than the {{ Y }} over the years.",
+        "The {{ X }} is less than or equal to {{ Y }} over the years."
+    ]
+    if answer.lower() == "yes":
+        return choice(yays)
+    return choice(nays)
+
+
+@binary_check
+def randomize_48(answer):
+    """Is the {{ X }} strictly less than the {{ Y }} over the years?"""
+    yays = [
+        "The {{ X }} is strictly less than the {{ Y }} over the years.",
+        "The {{ Y }} is strictly greater than the {{ X }} over the years."
+    ]
+    nays = [
+        "The {{ X }} is not strictly less than the {{ Y }} over the years.",
+        "The {{ X }} is greater than or equal to the {{ Y }} over the years."
+    ]
+    if answer.lower() == "yes":
+        return choice(yays)
+    return choice(nays)
+
+
+@binary_check
+def randomize_49(answer):
+    """Is it the case that in every {{ group }}, the sum of the {{ X }} and
+    {{ Y }} is greater than the {{ Z }}?"""
+    yays = [
+        "In every {{ group }}, the sum of the {{ X }} and {{ Y }} is greater than the {{ Z }}.",
+        "In every {{ group }}, the sum of the {{ Y }} and {{ X }} is greater than the {{ Z }}.",
+        "In every {{ group }}, the {{ Z }} is less than the sum of the {{ X }} and {{ Y }}.",
+        "In every {{ group }}, the {{ Z }} is less than the sum of the {{ Y }} and {{ X }}.",
+    ]
+    nays = [
+        "The sum of the {{ X }} and {{ Y }} is not greater than the {{ Z }} in every group.",
+        "The sum of the {{ Y }} and {{ X }} is not greater than the {{ Z }} in every group."
+    ]
+    if answer.lower() == "yes":
+        return choice(yays)
+    return choice(nays)
 
 
 if __name__ == "__main__":

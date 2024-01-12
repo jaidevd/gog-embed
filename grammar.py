@@ -29,12 +29,12 @@ def process_from_mongo(query=None):
         query = {}
     with MongoClient() as client:
         db = client.plotqa
-        for batch in tqdm(db.captions.find_raw_batches(query, batch_size=1_000_000)):
+        for batch in tqdm(db.val_captions.find_raw_batches(query, batch_size=1_000_000)):
             docs = bson.decode_all(batch)
             res = Parallel(n_jobs=12, verbose=2)(
                 delayed(process)(d["_id"], d["caption"], d.get("ignore")) for d in docs
             )
-            write_res = db.captions.bulk_write(
+            write_res = db.val_captions.bulk_write(
                 [
                     UpdateOne(
                         {"_id": r["question_id"]},
@@ -398,4 +398,4 @@ def get_repl_values(data):
 
 
 if __name__ == "__main__":
-    process_from_mongo()
+    process_from_mongo({'matches.0': {"$exists": True}})
