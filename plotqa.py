@@ -8,23 +8,43 @@ import yaml
 import pandas as pd
 import warnings
 
-# from grammar import fix
-# from pymongo import MongoClient, UpdateMany
-# from tqdm import tqdm
-# import bson
-
 op = os.path
+
 with open("qa_templates.yaml", "r") as fin:
     tmpl_cfg = pd.DataFrame.from_records(yaml.safe_load(fin), index="id")
 
 
-def search_templates(tmpls, _id, question_string, **kwargs):
-    matches = [(tmpl["id"], re.search(tmpl["regex"], question_string)) for tmpl in tmpls]
+def search_templates(tmpls, question_id, question_string, **kwargs):
+    """Search for which template best matches the question string.
+
+    The quality of the search depends on how many regex groups exist in the match.
+    More matching groups imply a better match.
+
+    Parameters
+    ----------
+    tmpls : list
+        List of records which represent a template. Essentially the
+        contents of `qa_templates.yaml`.
+    question_id : int
+        question_id of the question string - for backreference.
+    question_string : str
+        The string to match with the templates.
+    """
+    matches = [
+        (tmpl["id"], re.search(tmpl["regex"], question_string)) for tmpl in tmpls
+    ]
     matches = [(t, m.groupdict()) if m else (t, {}) for t, m in matches]
     match = max(matches, key=lambda x: len(x[1]))
     if len(match[1]) == 0:
-        warnings.warn(f"Question ID {_id} didn't match any template.")
-    return {"_id": _id, "template_id": match[0], "matches": match[1]}
+        warnings.warn(f"Question ID {question_id} didn't match any template.")
+        matched_template, matches = None, []
+    else:
+        matched_template, matches = match[:2]
+    return {
+        "question_id": question_id,
+        "template_id": matched_template,
+        "matches": matches,
+    }
 
 
 def generate_caption(header, caption, answer, **kwargs):
@@ -43,10 +63,23 @@ def generate_caption(header, caption, answer, **kwargs):
     return Template(tmpl).generate(answer=answer, **kwargs).decode()
 
 
-def process_qa(question_id, regex, answer, matches):
+def caption_qa(question_id, template_id, answer, matches, **kwargs):
+    """Generate a caption given a QA pair and regex matches.
+
+    Parameters
+    ----------
+    question_id : int
+        question_id of the question string - for backreference.
+    template_id : int
+        ID of the template that matches the question string.
+    answer : any
+        answer to the question string
+    matches : dict
+        Regex groupdict containing the matches.
+    """
     if answer is None:
-        return {"question_id": question_id, "template_id": regex, "caption": ""}
-    tmpl = tmpl_cfg.loc[regex]
+        return {"question_id": question_id, "template_id": template_id, "caption": ""}
+    tmpl = tmpl_cfg.loc[template_id]
     header = tmpl["template_header"]
     caption = tmpl["caption_templates"]
     try:
@@ -55,11 +88,11 @@ def process_qa(question_id, regex, answer, matches):
         else:
             out = ""
     except Exception as exc:
-        print(f"Failed for tid: {regex} qid: {question_id}")
+        print(f"Failed for tid: {template_id} qid: {question_id}")
         print(caption)
         print(matches)
         raise exc
-    return {"question_id": question_id, "template_id": regex, "caption": out}
+    return {"question_id": question_id, "template_id": template_id, "caption": out}
 
 
 def match_and_generate(qs, answer, pattern, header, tmpl_opts):
@@ -96,30 +129,14 @@ class PlotQA(object):
 
 
 if __name__ == "__main__":
-    from pymongo import MongoClient, UpdateOne
+    import json
     from joblib import Parallel, delayed
-    import bson
 
+    FILE = "/media/jaidevd/motherbox/archive/plotqa/qa_pairs_V2.json"
+    with open(FILE, "r") as fin:
+        df = pd.DataFrame.from_records(json.load(fin)["qa_pairs"])
+        df = df[["question_id", "question_string"]].to_dict(orient="records")
     tmpls = tmpl_cfg[["regex"]].reset_index().to_dict(orient="records")
-    with MongoClient() as client:
-        db = client.plotqa
-        for batch in db.val_captions.find_raw_batches({'varmatchsize': 0}, batch_size=1_000_000):
-            docs = bson.decode_all(batch)
-            res = Parallel(n_jobs=-1, verbose=2)(
-                delayed(search_templates)(tmpls, **doc) for doc in docs
-            )
-            updates = [
-                UpdateOne(
-                    {"_id": r["_id"]},
-                    {
-                        "$set": {
-                            "variables": r["matches"],
-                            "template_id": r["template_id"],
-                            "varmatchsize": len(r["matches"]),
-                        }
-                    },
-                )
-                for r in res
-            ]
-            wres = db.val_captions.bulk_write(updates)
-            print(wres.bulk_api_result)
+    matches = Parallel(n_jobs=-1, verbose=2)(
+        delayed(lambda x: search_templates(tmpls, **x))(x) for x in df
+    )
