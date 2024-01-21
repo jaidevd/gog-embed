@@ -1,3 +1,4 @@
+"""Utilities to fix grammatical errors in captions. Grammar checks are done with LanguageTool."""
 import json
 from collections import Counter
 from requests import get
@@ -25,6 +26,8 @@ is_noun_plural = lambda x: x.tag_ in ("NNS", "NNPS")  # NOQA: E731
 
 
 def process_from_mongo(query=None):
+    """Retrieve captions from MongoDB and process them with LanguageTool.
+    Write the results back to the database."""
     if query is None:
         query = {}
     with MongoClient() as client:
@@ -32,7 +35,7 @@ def process_from_mongo(query=None):
         for batch in tqdm(db.val_captions.find_raw_batches(query, batch_size=1_000_000)):
             docs = bson.decode_all(batch)
             res = Parallel(n_jobs=12, verbose=2)(
-                delayed(process)(d["_id"], d["caption"], d.get("ignore")) for d in docs
+                delayed(check_grammar)(d["_id"], d["caption"], d.get("ignore")) for d in docs
             )
             write_res = db.val_captions.bulk_write(
                 [
@@ -46,7 +49,19 @@ def process_from_mongo(query=None):
             print(write_res.bulk_api_result)  # NOQA: T201
 
 
-def process(question_id, caption, ignore=None, template_id=None, **kwargs):
+def check_grammar(question_id, caption, ignore=None, template_id=None):
+    """Process a single caption with LanguageTool.
+
+    Parameters:
+    -----------
+    question_id: int
+    caption: str
+    ignore: list
+        List of LT rules to ignore.
+    template_id: int
+        So that a set of errors can be associated with a template.
+
+    """
     params = {"language": "en-US", "text": caption}
     if ignore is not None:
         params.update({"disabledRules": ",".join(ignore)})
@@ -65,6 +80,7 @@ def has_match(matches, key, value):
 
 
 def err_counter(messages, top=5):
+    """Find the most common LT errors in a list of error messages."""
     msgs = []
     for m in messages:
         for match in m["matches"]:
@@ -75,11 +91,11 @@ def err_counter(messages, top=5):
     return ctr
 
 
-def get_sentences(errors):
-    return [k["matches"][0]["sentence"] for k in errors]
-
-
 def filter_lt_messages(messages, reverse=False, **kwargs):
+    """Filter a list of LT messages to find those that match a given pattern.
+
+    Or, do a reverse match: find those that _don't_ match a given pattern.
+    """
     if all([k is None for k in kwargs.values()]):
         raise ValueError("At least one kwarg must be ~None.")
     for k, v in kwargs.items():
@@ -94,6 +110,7 @@ def filter_lt_messages(messages, reverse=False, **kwargs):
 
 
 def find_root_nsubj(doc):
+    """Find the root and the nominal subject of a sentence."""
     root = None
     for token in doc:
         if token.dep_ == "ROOT":
@@ -126,6 +143,7 @@ def find_root_nsubj(doc):
 
 
 def has_agreement(verb, subject):
+    """Check if a verb agrees with its subject."""
     if (subject is None) or (subject.tag_ == "CD"):
         return True, verb
 
@@ -148,6 +166,7 @@ def has_agreement(verb, subject):
 
 
 def fix_verb_subject_agreement(doc):
+    """Fix verb agreement by changing the number (singular / plural)."""
     verb, subject = find_root_nsubj(doc)
     agrees, verb = has_agreement(verb, subject)
     verbix = verb.i
@@ -338,13 +357,13 @@ def check():
     for i in tqdm(range(5, n_slices)):
         gc.collect()
         part = captions[(i * unit) : (i + 1) * unit]
-        res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**k) for k in part)
+        res = Parallel(n_jobs=-1, verbose=2)(delayed(check_grammar)(**k) for k in part)
         res = [k for k in res if k["matches"]]
         with open(f"data/lt_results_{i}.json", "w") as fout:
             json.dump(res, fout, indent=2)
 
     remainder = captions[-remainder:]
-    res = Parallel(n_jobs=-1, verbose=2)(delayed(process)(**k) for k in remainder)
+    res = Parallel(n_jobs=-1, verbose=2)(delayed(check_grammar)(**k) for k in remainder)
     res = [k for k in res if k["matches"]]
     with open("data/lt_results_final.json", "w") as fout:
         json.dump(res, fout, indent=2)
@@ -359,7 +378,7 @@ def draw_sample(path="data/qa_captions.json", size=10_000):
     ):
         xdf = df.sample(10_000)
         res = Parallel(n_jobs=-1, verbose=2)(
-            delayed(process)(**r) for _, r in xdf.iterrows()
+            delayed(check_grammar)(**r) for _, r in xdf.iterrows()
         )
         res = [c for c in res if len(c["matches"]) > 0]
         samples.extend(res)

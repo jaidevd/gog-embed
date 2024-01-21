@@ -1,13 +1,31 @@
+"""This module contains functions that generate captions.
+
+Every question in the dataset can be classified into one of 49 templates
+(present in `qa_templates.yaml`), depending on how well the question string
+matches a given template. Each template has an ID. The functions in this module reflect how
+a QA pair for a given ID is converted into a caption.
+
+For a question, once the template ID is found, the corresponding function is called to
+generate the caption.
+"""
+
 from random import choice
 
 
 def coerce_input(_type):
+    """Coerce the answer of a question into the given type.
+
+    E.g. if the question is "What's the ratio of X to Y", then the answer is likely a float.
+    Using this as a decorator validates whether the answer to a given question template
+    is indeed a float.
+    """
     def converter(func):
         return lambda x: func(_type(x))
     return converter
 
 
 def binary_check(func):
+    """Validate that the answer is a binary ∈ {'yes', 'no'}."""
     def validate(arg):
         if arg.lower() not in {"yes", "no"}:
             t_id = func.__name__.split("_")[1]
