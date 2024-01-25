@@ -417,4 +417,7 @@ def get_repl_values(data):
 
 
 if __name__ == "__main__":
-    process_from_mongo({'matches.0': {"$exists": True}})
+    df = pd.read_json('tid_2_captions.json', lines=True)
+    errors = Parallel(n_jobs=8, verbose=2)(delayed(check_grammar)(**r) for _, r in df.iterrows())
+    with open('tid_2_errors.json', 'w') as fout:
+        json.dump([e for e in errors if len(e['matches']) > 0], fout, indent=2)

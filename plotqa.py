@@ -60,7 +60,7 @@ def generate_caption(header, caption, answer, **kwargs):
     else:
         raise ValueError(f"Invalid caption template {caption}.")
 
-    return Template(tmpl).generate(answer=answer, **kwargs).decode()
+    return Template(tmpl, autoescape=None).generate(answer=answer, **kwargs).decode()
 
 
 def caption_qa(question_id, template_id, answer, matches, **kwargs):

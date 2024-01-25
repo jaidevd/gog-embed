@@ -105,3 +105,62 @@ The caption can then be generated as:
  'template_id': 2,
  'caption': ' The percentage of female population who survived till age of 65 in 1993 is 87.4244. '}
  ```
+
+## Grammatical Checks on Generated Captions
+
+Download [LanguageTool](https://languagetool.org/download/LanguageTool-stable.zip) as follows:
+
+```bash
+$ wget https://languagetool.org/download/LanguageTool-6.3.zip
+$ unzip LanguageTool-6.3.zip -d .
+$ mv ./LanguageTool-6.3 ./LanguageTool
+```
+
+Run the following commands to make changes in LanguageTool's configuration:
+```bash
+$ ln -s ./lt-config/lt_config.ini ./LanguageTool/config.ini
+$ echo >> ./LanguageTool/org/languagetool/resource/en/hunspell/spelling.txt
+$ cat ./lt-config/british_spelling.txt >> ./LanguageTool/org/languagetool/resource/en/hunspell/spelling.txt
+```
+
+**Note on types of questions:** The original dataset contains questions
+classified into three categories:
+  1. _Structural understanding_: questions pertaining to the appearance and
+     graphical elements of the plot, like how many legend labels it has, or what
+     the title of the graph is.
+  2. _Data Retrieval_: questions pertaining to information contained in a single
+     element of the plot, like the value of a metric.
+  3. _Reasoning_:  Questions that need either numeric or visual _reasoning_ to
+     answer.
+
+In our dataset, we are concerned only with the _captions_ that would be written
+for plots. So we filter out all questions in the structural understanding
+category, and some from the data retrieval category.
+
+Suppose the captions are in a file named `captions.json`, then first remove some unwanted captions with:
+```bash
+$ sed -i -f ./remove_structural_qs.sed captions.json
+```
+
+
+Run the initial set of fixes on the remaining captions:
+```bash
+$ sed -i -f ./lt-config/fixes.sed captions.json
+```
+
+Start the LanguageTool server as follows:
+
+```bash
+$ cd LanguageTool
+$ java -cp languagetool-server.jar org.languagetool.server.HTTPServer --port 8081 --allow-origin --config config.ini
+```
+
+Then run the captions through the LanguageTool API as follows:
+
+```python
+>>> import pandas as pd
+>>> from grammar import check_grammar
+>>> df = pd.read_json('captions.json', lines=True)
+>>> for _, row in df.iterrows():
+... 	errors = check_grammar(**row)
+```
